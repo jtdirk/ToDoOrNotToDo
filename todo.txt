@@ -1,0 +1,21 @@
+2021-10-26 Leiterplatten ändern +Abkündigung_MLESD12A
+2021-10-26 Leiterplatten ändern +Abkündigung_FK2125T186AL
+2021-10-26 Abschätzung Leiterplattenfläche +VingmateSL
+2021-10-26 Netzteil für SWIR-Laser +TAC-RAY_NG/eSWIR
+2021-10-26 GPS-Modul unterbringen+TAC-RAY_NG/eSWIR
+2021-10-26 zusätzliche Pads, Schirmung +EU402260_Trigger-LP
+2021-10-26 Verdrahtungsunterlagen aktualisieren +EU402260_Trigger-LP
+2021-10-26 Indexerhöhung (Lötstopplack) +EUPQM216_Laser_Headlight
+2021-10-26 Änderung DB: fräsen +EU402041AE_Trigger
+2021-10-26 Netzteil und LED aus 1000lm-Kopf +650-/350-/250-lm-Lampenkopf
+2021-10-26 Untersuchung ESD-Schaden und Optimierung +LowProfile
+2021-10-26 Nahfeldbeleuchter LED-Print, Laser-Print, Verdrahtungsunterlagen +LowProfile
+2021-10-26 Leiterplatten in Betrieb nehmen +PTAL
+2021-10-26 für kurzen und langen Lampenbody entwickeln +Dualkopf
+2021-10-26 EMV Untersuchung und Optimierung +LLM-VR
+2021-10-26 EEPROM +Navipad_TAC-RAY
+2021-10-26 Verdrahtungsunterlagen und Stücklistenstruktur überarbeiten +TAC-RAY
+2021-10-26 Leiterplatten (Schleifring, UV-Beleuchter) +Justieranlage
+2021-10-27 Netzteil-LP links am Rand Transistor und Leiterbahn zu nah am Rand +PTAL
+2021-10-27 Pads Taster falsch/unrauchbar +PTAL
+2021-10-27 Leistung VIS: 250lm, IR: 100mW +Dualkopf
