@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Window
 import QtQuick.Layouts
 import "./"
+import BaseModel
 
 Window {
     id: windowMainWindow
@@ -9,7 +10,7 @@ Window {
     height: 480
     visible: true
     title: qsTr("ToDoOrNotToDo")
-
+/*
     ListModel {
         id: projectA
         ListElement { taskText: "nichts tun"}
@@ -17,7 +18,7 @@ Window {
         ListElement { taskText: "beschuldigen"}
         ListElement { taskText: "leugnen"}
     }
-
+*/
     Component {
         id: taskDelegate
         Task {
@@ -38,14 +39,14 @@ Window {
         AddTaskButton {}
     }
 
-    ListView {
+    TableView {
         anchors.fill: parent
         anchors.margins: 5
         clip: true
 
-        model: projectA
+        model: BaseModel
         delegate: taskDelegate
-        header: projectHeader
-        footer: projectFooter
+        //header: projectHeader
+        //footer: projectFooter
     }
 }

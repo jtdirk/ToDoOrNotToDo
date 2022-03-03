@@ -1,8 +1,16 @@
-from PySide6.QtCore import (QAbstractListModel, QByteArray, QModelIndex, Qt, Slot)
+from PySide6.QtCore import (QAbstractTableModel , QAbstractListModel, QByteArray, QModelIndex, Qt, Slot)
 from PySide6.QtGui import QColor
 
-
 class BaseModel(QAbstractListModel):
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.tasks = []
+
+    def rowCount(self, parent=QModelIndex()):
+        return len(self.tasks)
+
+class BaseListModel(QAbstractListModel):
 
     RatioRole = Qt.UserRole + 1
 

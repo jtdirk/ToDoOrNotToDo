@@ -16,9 +16,13 @@ def openTodotxt():
     todotxt.parse()
 
     for task in todotxt.tasks:
-        if not task.is_completed:
-            print(task.projects)
-            print("-----")
+        for project in task.projects:
+            try:
+                projectList.index(project)
+            except:
+                projectList.append(project)
+
+    print(projectList)
 
 def setup():
     openTodotxt()
@@ -30,6 +34,7 @@ if __name__ == "__main__":
     engine = QQmlApplicationEngine()
 
     qmlRegisterType(BaseModel, "BaseModel", 1, 0, "BaseModel")
+
 
     filename = os.fspath(CURRENT_DIRECTORY / "main.qml")
     url = QUrl.fromLocalFile(filename)
