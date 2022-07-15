@@ -10,19 +10,11 @@ Window {
     height: 480
     visible: true
     title: qsTr("ToDoOrNotToDo")
-/*
-    ListModel {
-        id: projectA
-        ListElement { taskText: "nichts tun"}
-        ListElement { taskText: "diskutieren"}
-        ListElement { taskText: "beschuldigen"}
-        ListElement { taskText: "leugnen"}
-    }
-*/
+
     Component {
         id: taskDelegate
         Task {
-            text: taskText;
+            text: display
         }
     }
 
@@ -44,8 +36,10 @@ Window {
         anchors.margins: 5
         clip: true
 
-        model: BaseModel
-        delegate: taskDelegate
+        model: BaseModel {}
+        delegate: Task {
+            text: tasktext
+        }
         //header: projectHeader
         //footer: projectFooter
     }

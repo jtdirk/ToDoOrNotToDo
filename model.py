@@ -1,14 +1,43 @@
 from PySide6.QtCore import (QAbstractTableModel , QAbstractListModel, QByteArray, QModelIndex, Qt, Slot)
 from PySide6.QtGui import QColor
+import pytodotxt
 
 class BaseModel(QAbstractListModel):
 
+    TaskTextRole = Qt.UserRole + 1
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.tasks = []
+        self.tasks = [] # [{"tasktext": "Hallo"}, {"tasktext": "du"}, {"tasktext": "Blödmann"}]
+
+        self.openTodotxt()
 
     def rowCount(self, parent=QModelIndex()):
         return len(self.tasks)
+
+    def data(self, index, role: int):
+        if not self.tasks:
+            ret = None
+        elif not index.isValid():
+            ret = None
+        elif role == BaseModel.TaskTextRole:
+            ret = self.tasks[index.row()]["tasktext"]
+        else:
+            ret = None
+
+        return ret
+
+    def roleNames(self):
+        return {
+            BaseModel.TaskTextRole: b'tasktext'
+        }
+
+    def openTodotxt(self):
+        todotxt = pytodotxt.TodoTxt('todo.txt')
+        todotxt.parse()
+
+        for task in todotxt.tasks:
+            self.tasks.append({"tasktext": task.description})
 
 class BaseListModel(QAbstractListModel):
 
