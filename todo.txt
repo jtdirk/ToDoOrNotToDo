@@ -2,7 +2,7 @@
 2021-10-26 Leiterplatten ändern +Abkündigung_FK2125T186AL
 2021-10-26 Abschätzung Leiterplattenfläche +VingmateSL
 2021-10-26 Netzteil für SWIR-Laser +TAC-RAY_NG/eSWIR
-2021-10-26 GPS-Modul unterbringen+TAC-RAY_NG/eSWIR
+2021-10-26 GPS-Modul unterbringen +TAC-RAY_NG/eSWIR
 2021-10-26 zusätzliche Pads, Schirmung +EU402260_Trigger-LP
 2021-10-26 Verdrahtungsunterlagen aktualisieren +EU402260_Trigger-LP
 2021-10-26 Indexerhöhung (Lötstopplack) +EUPQM216_Laser_Headlight

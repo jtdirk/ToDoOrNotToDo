@@ -1,8 +1,9 @@
 import QtQuick
 import QtQuick.Window
 import QtQuick.Layouts
+import QtQuick.Controls
 import "./"
-import BaseModel
+import ProjectListModel
 
 Window {
     id: windowMainWindow
@@ -11,36 +12,36 @@ Window {
     visible: true
     title: qsTr("ToDoOrNotToDo")
 
-    Component {
-        id: taskDelegate
-        Task {
-            text: display
-        }
-    }
-
-    Component {
-        id: projectHeader
-
-        Project {
-            text: "Projekt A"
-        }
-    }
-
-    Component {
-        id: projectFooter
-        AddTaskButton {}
-    }
-
-    TableView {
+    ScrollView {
         anchors.fill: parent
-        anchors.margins: 5
-        clip: true
+        ListView {
+            id: theBigList
+            orientation: ListView.Horizontal
+            anchors.fill: parent
 
-        model: BaseModel {}
-        delegate: Task {
-            text: tasktext
+            Component {
+                id: projectList
+                ListView {
+                    id: taskList
+                    
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    width: 100
+
+                    header: Project {
+                        text: project
+                    }
+                    
+                    model: tasks
+                    delegate: Task {
+                        text: taskText
+                    }
+
+                    footer: AddTaskButton {}
+                }
+            }
+            model: ProjectListModel {}
+            delegate: projectList
         }
-        //header: projectHeader
-        //footer: projectFooter
     }
 }

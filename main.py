@@ -2,7 +2,7 @@
 import os
 from pathlib import Path
 import sys
-from model import BaseModel
+from model import ProjectListModel
 # import pytodotxt
 
 from PySide6.QtCore import QUrl
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     app = QGuiApplication(sys.argv)
     engine = QQmlApplicationEngine()
 
-    qmlRegisterType(BaseModel, "BaseModel", 1, 0, "BaseModel")
+    qmlRegisterType(ProjectListModel, "ProjectListModel", 1, 0, "ProjectListModel")
 
 
     filename = os.fspath(CURRENT_DIRECTORY / "main.qml")
