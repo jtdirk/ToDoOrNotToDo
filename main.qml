@@ -18,6 +18,7 @@ Window {
             id: theBigList
             orientation: ListView.Horizontal
             anchors.fill: parent
+            spacing: MyStyle.element.margins
 
             Component {
                 id: projectList
@@ -26,7 +27,7 @@ Window {
                     
                     anchors.top: parent.top
                     anchors.bottom: parent.bottom
-                    width: 100
+                    width: MyStyle.element.width
 
                     header: Project {
                         text: project
