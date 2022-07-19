@@ -3,12 +3,9 @@ from PySide6.QtGui import QColor
 import pytodotxt
 
 class TaskListModel(QAbstractListModel):
-
-    TaskTextRole = Qt.UserRole + 1
-
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.tasks = ["Task1", "Task2", "Task3"]
+        self.tasks = []
 
     def rowCount(self, parent=QModelIndex()):
         return len(self.tasks)
@@ -18,29 +15,43 @@ class TaskListModel(QAbstractListModel):
             ret = None
         elif not index.isValid():
             ret = None
-        elif role == TaskListModel.TaskTextRole:
+        elif role == Qt.DisplayRole:
             ret = self.tasks[index.row()]
         else:
             ret = None
 
         return ret
 
+    def setData(self, index, value, role):
+        print(value)
+        if not index.isValid():
+            return False
+        if role == Qt.EditRole:
+            self.tasks[index.row()] = value
+        
+        return True
+
+#    def flags(self, index):
+#        return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
+
     def roleNames(self):
         default = super().roleNames()
-        default[self.TaskTextRole] = QByteArray(b"taskText")
         return default
 
+    @Slot(result=bool)
+    def append(self, task):
+        """Slot to append a row at the end"""
+        self.tasks.append(task)
+
+        return self.insertRow(self.rowCount())
 
 class ProjectListModel(QAbstractListModel):
 
-    ProjectRole = Qt.UserRole + 1
-    TaskRole = Qt.UserRole + 2
+    TaskRole = Qt.UserRole + 1
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.projects = []
-        # self.projects = [{"project": "Projekt1", "tasks": ["Task1", "Task2", "Task3"]}, {"project": "Projekt2", "tasks": ["Task4", "Task5", "Task6"]},{"project": "Projekt3", "tasks": ["Task7", "Task8", "Task9"]}]
-        # self.projects = [{"project": "Projekt1", "tasks": TaskListModel()}, {"project": "Projekt2", "tasks": TaskListModel()},{"project": "Projekt3", "tasks": TaskListModel()}]
         self.openTodotxt()
 
     def rowCount(self, parent=QModelIndex()):
@@ -51,7 +62,7 @@ class ProjectListModel(QAbstractListModel):
             ret = None
         elif not index.isValid():
             ret = None
-        elif role == ProjectListModel.ProjectRole:
+        elif role == Qt.DisplayRole:
             ret = self.projects[index.row()]["project"]
         elif role == ProjectListModel.TaskRole:
             ret = self.projects[index.row()]["tasks"]
@@ -60,44 +71,45 @@ class ProjectListModel(QAbstractListModel):
 
         return ret
 
+    def setData(self, index, value, role):
+        print(value)
+        if not index.isValid():
+            return False
+        if role == Qt.EditRole:
+            self.projects[index.row()]["project"] = value
+        
+        return True
+
     def roleNames(self):
         default = super().roleNames()
-        default[self.ProjectRole] = QByteArray(b"project")
         default[self.TaskRole] = QByteArray(b"tasks")
         return default
 
     def openTodotxt(self):
-        todotxt = pytodotxt.TodoTxt('todo.txt')
-        todotxt.parse()
+        self.todotxt = pytodotxt.TodoTxt('todo.txt')
+        self.todotxt.parse()
 
-        for task in todotxt.tasks:
+        for task in self.todotxt.tasks:
             project = ""
             if task.projects:
                 project = task.projects[0]
 
-            #if not self.projects:
-            #    self.projects.append([project, ""])
-
-
             already_exists = False
-            for i in self.projects:
-                if self.projects[i] == project:
+            for i in range(len(self.projects)):
+                if self.projects[i]["project"] == project:
                     already_exists = True
 
             if not already_exists:
-                self.projects.append([project, ""])
+                self.projects.append({"project": project, "tasks": self.tasksByProject(project)})
 
-        print(self.projects)
-                # self.tasks.append([project, task.bare_description()])
-#            else:
-#                found = False
-#                for i in range(len(self.tasks)):
-#                    if self.tasks[i][0] == project:
-#                        self.tasks[i].append(task.bare_description())
-#                        found = True
-#                if not found:
-#                    self.tasks.append([project, task.bare_description()])
-#            self.tasks.append({"tasktext": task.bare_description(), "project": project})
+
+    def tasksByProject(self, project):
+        tlm = TaskListModel()
+        for task in self.todotxt.tasks:
+            if task.projects[0] == project:
+                tlm.append(task.bare_description())
+        
+        return tlm
 
 
 class BaseListModel(QAbstractListModel):

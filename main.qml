@@ -20,6 +20,9 @@ Window {
             anchors.fill: parent
             spacing: MyStyle.element.margins
 
+            model: ProjectListModel {}
+            delegate: projectList
+
             Component {
                 id: projectList
                 ListView {
@@ -30,19 +33,19 @@ Window {
                     width: MyStyle.element.width
 
                     header: Project {
-                        text: project
+                        text: display
+                        onTextChanged: model.edit = text
                     }
-                    
+
                     model: tasks
                     delegate: Task {
-                        text: taskText
+                        text: display
+                        onTextChanged: model.edit = text
                     }
 
                     footer: AddTaskButton {}
                 }
             }
-            model: ProjectListModel {}
-            delegate: projectList
         }
     }
 }

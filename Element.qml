@@ -5,9 +5,10 @@ Rectangle {
     id: element
 
     width: MyStyle.element.width
-    height: MyStyle.element.height
     radius: MyStyle.element.radius
     anchors.margins: MyStyle.element.margins
+
+    implicitHeight: mouseArea.implicitHeight
 
     property alias text: elementText.text
     property alias textColor: elementText.color
@@ -30,7 +31,7 @@ Rectangle {
         id: mouseArea
 
         anchors.fill: parent
-
+        implicitHeight: elementText.implicitHeight + 2 * MyStyle.element.margins
         hoverEnabled: true
         preventStealing: true
         
@@ -38,12 +39,12 @@ Rectangle {
             id: elementText
 
             anchors.fill: parent
-            
+            anchors.margins: MyStyle.element.margins
+
             hoverEnabled: true
 
             verticalAlignment: Text.AlignVCenter
             wrapMode: Text.WordWrap
-            anchors.margins: 5
             clip: true
         }
     }
