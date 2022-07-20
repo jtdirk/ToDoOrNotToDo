@@ -14,38 +14,42 @@ Window {
 
     ScrollView {
         anchors.fill: parent
-        ListView {
-            id: theBigList
-            orientation: ListView.Horizontal
+        RowLayout {
             anchors.fill: parent
-            spacing: MyStyle.element.margins
 
-            model: ProjectListModel {}
-            delegate: projectList
-
-            Component {
-                id: projectList
-                ListView {
+            Repeater {
+                model: ProjectListModel {}
+                delegate: Column {
                     id: taskList
                     
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-                    width: MyStyle.element.width
+                    Layout.alignment: Qt.AlignTop
 
-                    header: Project {
+                    Project {
+                        implicitHeight: MyStyle.element.height
                         text: display
                         onTextChanged: model.edit = text
                     }
 
-                    model: tasks
-                    delegate: Task {
-                        text: display
-                        onTextChanged: model.edit = text
+                    ListView {
+                        model: tasks
+                        delegate: Task {
+                            implicitHeight: MyStyle.element.height
+                            text: display
+                            onTextChanged: model.edit = text
+                        }
                     }
 
-                    footer: AddTaskButton {}
+                    AddTaskButton {
+                        onClicked: tasks.append("")
+                    }
+
                 }
             }
+
+            AddProjectButton {
+                Layout.alignment: Qt.AlignTop
+            }
+
         }
     }
 }

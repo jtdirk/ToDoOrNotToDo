@@ -10,6 +10,8 @@ Element {
     property alias textSize: button.font.pointSize
     isClosable: false
 
+    signal clicked
+
     Button {
         id: button
 
@@ -34,5 +36,7 @@ Element {
             border.color: element.textColor
             radius: button.height / 2
         }
+
+        onClicked: element.clicked()
     }
 }

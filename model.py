@@ -23,7 +23,6 @@ class TaskListModel(QAbstractListModel):
         return ret
 
     def setData(self, index, value, role):
-        print(value)
         if not index.isValid():
             return False
         if role == Qt.EditRole:
@@ -31,19 +30,15 @@ class TaskListModel(QAbstractListModel):
         
         return True
 
-#    def flags(self, index):
-#        return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
-
     def roleNames(self):
         default = super().roleNames()
         return default
 
-    @Slot(result=bool)
+    @Slot(str, result=bool)
     def append(self, task):
         """Slot to append a row at the end"""
-        self.tasks.append(task)
-
-        return self.insertRow(self.rowCount())
+        print(task)
+        return self.tasks.append(task)
 
 class ProjectListModel(QAbstractListModel):
 
@@ -72,7 +67,6 @@ class ProjectListModel(QAbstractListModel):
         return ret
 
     def setData(self, index, value, role):
-        print(value)
         if not index.isValid():
             return False
         if role == Qt.EditRole:

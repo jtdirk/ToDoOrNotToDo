@@ -44,7 +44,7 @@ Rectangle {
             hoverEnabled: true
 
             verticalAlignment: Text.AlignVCenter
-            wrapMode: Text.WordWrap
+            wrapMode: Text.Wrap
             clip: true
         }
     }
