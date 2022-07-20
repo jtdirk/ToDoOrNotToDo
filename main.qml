@@ -13,43 +13,44 @@ Window {
     title: qsTr("ToDoOrNotToDo")
 
     ScrollView {
+        id: scrollView
+
         anchors.fill: parent
-        RowLayout {
+        
+        ListView {
+            id: projectList
+
+            orientation: ListView.Horizontal
             anchors.fill: parent
 
-            Repeater {
-                model: ProjectListModel {}
-                delegate: Column {
-                    id: taskList
+            spacing: MyStyle.element.margins
+
+            model: ProjectListModel {}
+            delegate: ListView {
+                id: taskList
                     
-                    Layout.alignment: Qt.AlignTop
+                width: MyStyle.element.width
 
-                    Project {
-                        implicitHeight: MyStyle.element.height
-                        text: display
-                        onTextChanged: model.edit = text
-                    }
+                model: tasks
+                delegate: Task {
+                    text: display
+                    onTextChanged: model.edit = text
+                }
 
-                    ListView {
-                        model: tasks
-                        delegate: Task {
-                            implicitHeight: MyStyle.element.height
-                            text: display
-                            onTextChanged: model.edit = text
-                        }
-                    }
+                header: Project {
+                    text: display
+                    onTextChanged: model.edit = text
+                }
 
-                    AddTaskButton {
+                footer: AddTaskButton {
                         onClicked: tasks.append("")
-                    }
-
                 }
             }
-
+/*
             AddProjectButton {
                 Layout.alignment: Qt.AlignTop
             }
-
+*/
         }
     }
 }
