@@ -17,12 +17,16 @@ Window {
 
         anchors.fill: parent
         Row{
+            spacing: MyStyle.element.margins
+
             Repeater {
                 id: projectList
 
                 anchors.fill: parent
                 
-                model: ProjectListModel {}
+                model: ProjectListModel {
+                    id: projectListModel
+                }
                 delegate: Column {
                     id: column
 
@@ -31,6 +35,7 @@ Window {
                         
                         text: display
                         onTextChanged: model.edit = text
+                        onClose: projectListModel.remove(index)
                     }
                     Repeater {
                         id: taskList
@@ -38,6 +43,7 @@ Window {
                         delegate: Task {
                             text: display
                             onTextChanged: model.edit = text
+                            onClose: tasks.remove(index)
                         }
                     }
 
@@ -54,6 +60,7 @@ Window {
                 Layout.alignment: Qt.AlignTop
                 onClicked: {
                     projectList.model.append("neues Projekt")
+                    scrollView.ScrollBar.horizontal.position = 1
                 }
             }
         }

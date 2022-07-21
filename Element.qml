@@ -17,6 +17,8 @@ Rectangle {
     property alias textCenter: elementText.horizontalAlignment
     property bool isClosable: true
 
+    signal close
+    
     property bool hovered: {
         if((mouseArea.containsMouse || elementText.hovered || closeButton.hovered) && isClosable)
         {
@@ -62,5 +64,7 @@ Rectangle {
 
         HoverHandler {
         }
+
+        onClicked: element.close()
     }
 }

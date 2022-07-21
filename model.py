@@ -57,6 +57,26 @@ class TaskListModel(QAbstractListModel):
 
         return True
 
+    @Slot(int, result=bool)
+    def remove(self, row: int):
+        """Slot to remove one row"""
+        return self.removeRow(row)
+
+    def removeRow(self, row, parent=QModelIndex()):
+        """Remove one row at index row"""
+        return self.removeRows(row, 0, parent)
+
+    def removeRows(self, row: int, count: int, parent=QModelIndex()):
+        """Remove n rows (n=1+count) starting at row"""
+        self.beginRemoveRows(QModelIndex(), row, row + count)
+
+        # start database work
+        self.tasks = self.tasks[:row] + self.tasks[row + count + 1 :]
+        # end database work
+
+        self.endRemoveRows()
+        return True
+
 
 class ProjectListModel(QAbstractListModel):
 
@@ -113,6 +133,26 @@ class ProjectListModel(QAbstractListModel):
         self.projects.append({"project": "", "tasks": [""]})
         self.endInsertRows()
 
+        return True
+
+    @Slot(int, result=bool)
+    def remove(self, row: int):
+        """Slot to remove one row"""
+        return self.removeRow(row)
+
+    def removeRow(self, row, parent=QModelIndex()):
+        """Remove one row at index row"""
+        return self.removeRows(row, 0, parent)
+
+    def removeRows(self, row: int, count: int, parent=QModelIndex()):
+        """Remove n rows (n=1+count) starting at row"""
+        self.beginRemoveRows(QModelIndex(), row, row + count)
+
+        # start database work
+        self.projects = self.projects[:row] + self.projects[row + count + 1 :]
+        # end database work
+
+        self.endRemoveRows()
         return True
 
     def roleNames(self):
