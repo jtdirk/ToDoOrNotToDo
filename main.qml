@@ -52,6 +52,9 @@ Window {
             }
             AddProjectButton {
                 Layout.alignment: Qt.AlignTop
+                onClicked: {
+                    projectList.model.append("neues Projekt")
+                }
             }
         }
     }

@@ -92,6 +92,29 @@ class ProjectListModel(QAbstractListModel):
         
         return True
 
+    @Slot(str, result=bool)
+    def append(self, project):
+        """Slot to append a row at the end"""
+        result = self.insertRow(self.rowCount())
+        if result:
+            self.projects[self.rowCount() - 1]["project"] = project
+            self.dataChanged.emit(self.index(self.rowCount() - 1,0), self.index(self.rowCount() - 1,0))
+        return result
+
+
+    def insertRow(self, row):
+        """Insert a single row at row"""
+        return self.insertRows(row, 0)
+
+    def insertRows(self, row: int, count, index=QModelIndex()):
+        """Insert n rows (n = 1 + count)  at row"""
+
+        self.beginInsertRows(QModelIndex(), row, row + count)
+        self.projects.append({"project": "", "tasks": [""]})
+        self.endInsertRows()
+
+        return True
+
     def roleNames(self):
         default = super().roleNames()
         default[self.TaskRole] = QByteArray(b"tasks")
