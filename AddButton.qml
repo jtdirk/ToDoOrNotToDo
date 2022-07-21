@@ -10,6 +10,8 @@ Element {
     property alias textSize: button.font.pointSize
     isClosable: false
 
+    width: height
+    
     signal clicked
 
     Button {
