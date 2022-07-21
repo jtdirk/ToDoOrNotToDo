@@ -27,7 +27,7 @@ class TaskListModel(QAbstractListModel):
             return False
         if role == Qt.EditRole:
             self.tasks[index.row()] = value
-        
+
         return True
 
     def roleNames(self):
@@ -37,8 +37,26 @@ class TaskListModel(QAbstractListModel):
     @Slot(str, result=bool)
     def append(self, task):
         """Slot to append a row at the end"""
-        print(task)
-        return self.tasks.append(task)
+        result = self.insertRow(self.rowCount())
+        if result:
+            self.tasks[self.rowCount() - 1] = task
+            self.dataChanged.emit(self.index(self.rowCount() - 1,0), self.index(self.rowCount() - 1,0))
+        return result
+
+
+    def insertRow(self, row):
+        """Insert a single row at row"""
+        return self.insertRows(row, 0)
+
+    def insertRows(self, row: int, count, index=QModelIndex()):
+        """Insert n rows (n = 1 + count)  at row"""
+
+        self.beginInsertRows(QModelIndex(), row, row + count)
+        self.tasks.append("")
+        self.endInsertRows()
+
+        return True
+
 
 class ProjectListModel(QAbstractListModel):
 

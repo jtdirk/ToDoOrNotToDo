@@ -16,34 +16,38 @@ Window {
         id: scrollView
 
         anchors.fill: parent
-        
+
         ListView {
             id: projectList
 
             orientation: ListView.Horizontal
             anchors.fill: parent
-
+            
             spacing: MyStyle.element.margins
 
             model: ProjectListModel {}
-            delegate: ListView {
-                id: taskList
+            delegate: Column {
+                id: column
+                Project {
+                    id: project
                     
-                width: MyStyle.element.width
-
-                model: tasks
-                delegate: Task {
                     text: display
                     onTextChanged: model.edit = text
                 }
-
-                header: Project {
-                    text: display
-                    onTextChanged: model.edit = text
+                Repeater {
+                    id: taskList
+                    model: tasks
+                    delegate: Task {
+                        text: display
+                        onTextChanged: model.edit = text
+                    }
                 }
 
-                footer: AddTaskButton {
-                        onClicked: tasks.append("")
+                AddTaskButton {
+                    id: addTaskButton
+                    onClicked: {
+                        tasks.append("neuer Task")
+                    }
                 }
             }
 /*
