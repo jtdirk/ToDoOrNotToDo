@@ -40,7 +40,7 @@ class TaskListModel(QAbstractListModel):
         result = self.insertRow(self.rowCount())
         if result:
             self.tasks[self.rowCount() - 1] = task
-            self.dataChanged.emit(self.index(self.rowCount() - 1,0), self.index(self.rowCount() - 1,0))
+            self.dataChanged.emit(self.index(self.rowCount() - 1), self.index(self.rowCount() - 1))
         return result
 
 
@@ -118,7 +118,7 @@ class ProjectListModel(QAbstractListModel):
         result = self.insertRow(self.rowCount())
         if result:
             self.projects[self.rowCount() - 1]["project"] = project
-            self.dataChanged.emit(self.index(self.rowCount() - 1,0), self.index(self.rowCount() - 1,0))
+            self.dataChanged.emit(self.index(self.rowCount() - 1), self.index(self.rowCount() - 1))
         return result
 
 
@@ -130,7 +130,9 @@ class ProjectListModel(QAbstractListModel):
         """Insert n rows (n = 1 + count)  at row"""
 
         self.beginInsertRows(QModelIndex(), row, row + count)
-        self.projects.append({"project": "", "tasks": [""]})
+        t = TaskListModel()
+        t.append("neuer Task")
+        self.projects.append({"project": "", "tasks": t})
         self.endInsertRows()
 
         return True
