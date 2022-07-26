@@ -17,9 +17,11 @@ Rectangle {
     property alias textCenter: elementText.horizontalAlignment
     property bool creationDateVisible: false
     property alias creationDateText: creationDate.text
+    property alias isTaskCompleted: elementText.font.strikeout
     property bool isClosable: true
 
     signal close
+    signal complete
     
     property bool hovered: {
         if((mouseArea.containsMouse || elementText.hovered || closeButton.hovered) && isClosable)
@@ -57,7 +59,6 @@ Rectangle {
 
             hoverEnabled: true
 
-            //verticalAlignment: Text.AlignVCenter
             wrapMode: Text.Wrap
             clip: true
         }
@@ -88,5 +89,22 @@ Rectangle {
         }
 
         onClicked: element.close()
+    }
+    RoundButton {
+        id: completeButton
+
+        width: 20
+        height: 20
+        radius: 10
+        text: "✔"
+        anchors.top: parent.top
+        anchors.right: closeButton.left
+
+        visible: element.hovered
+
+        HoverHandler {
+        }
+
+        onClicked: element.complete()
     }
 }

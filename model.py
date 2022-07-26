@@ -1,10 +1,11 @@
-from datetime import datetime
 from PySide6.QtCore import (QAbstractTableModel , QAbstractListModel, QByteArray, QModelIndex, Qt, Slot)
 from PySide6.QtGui import QColor
 import pytodotxt
+from datetime import datetime
 
 class TaskListModel(QAbstractListModel):
     CreationDateRole = Qt.UserRole + 1
+    IsCompletedRole = Qt.UserRole + 2
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -14,7 +15,6 @@ class TaskListModel(QAbstractListModel):
         return len(self.tasks)
 
     def data(self, index, role: int):
-        print(role)
         if not self.tasks:
             ret = None
         elif not index.isValid():
@@ -23,6 +23,8 @@ class TaskListModel(QAbstractListModel):
             ret = self.tasks[index.row()]["text"]
         elif role == self.CreationDateRole:
             ret = self.tasks[index.row()]["creationDate"]
+        elif role == self.IsCompletedRole:
+            ret = self.tasks[index.row()]["isCompleted"]
         else:
             ret = None
 
@@ -39,15 +41,17 @@ class TaskListModel(QAbstractListModel):
     def roleNames(self):
         default = super().roleNames()
         default[self.CreationDateRole] = QByteArray(b"creationDate")
+        default[self.IsCompletedRole] = QByteArray(b"isCompleted")
         return default
 
-    @Slot(str, str, result=bool)
-    def append(self, task, creationDate):
+    @Slot(str, str, bool, result=bool)
+    def append(self, task, creationDate, is_completed):
         """Slot to append a row at the end"""
         result = self.insertRow(self.rowCount())
         if result:
             self.tasks[self.rowCount() - 1]["text"] = task
             self.tasks[self.rowCount() - 1]["creationDate"] = creationDate
+            self.tasks[self.rowCount() - 1]["isCompleted"] = is_completed
             self.dataChanged.emit(self.index(self.rowCount() - 1), self.index(self.rowCount() - 1))
         return result
 
@@ -60,7 +64,7 @@ class TaskListModel(QAbstractListModel):
         """Insert n rows (n = 1 + count)  at row"""
 
         self.beginInsertRows(QModelIndex(), row, row + count)
-        self.tasks.append({"text": "", "creationDate": ""})
+        self.tasks.append({"text": "", "creationDate": "", "isCompleted": False})
         self.endInsertRows()
 
         return True
@@ -85,6 +89,12 @@ class TaskListModel(QAbstractListModel):
         self.endRemoveRows()
         return True
 
+    @Slot(int, result = bool)
+    def complete(self, row: int):
+        self.tasks[row]["isCompleted"] = not self.tasks[row]["isCompleted"]
+        self.dataChanged.emit(self.index(row), self.index(row))
+
+        return True
 
 class ProjectListModel(QAbstractListModel):
 
@@ -192,7 +202,7 @@ class ProjectListModel(QAbstractListModel):
         tlm = TaskListModel()
         for task in self.todotxt.tasks:
             if task.projects[0] == project:
-                tlm.append(task.bare_description(), task.creation_date.strftime("%d.%m.%Y"))
+                tlm.append(task.bare_description(), task.creation_date.strftime("%d.%m.%Y"), task.is_completed)
         
         return tlm
 

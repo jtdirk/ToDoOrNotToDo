@@ -72,15 +72,17 @@ Window {
                         delegate: Task {
                             text: display
                             creationDateText: creationDate
+                            isTaskCompleted: isCompleted
                             onTextChanged: model.edit = text
                             onClose: tasks.remove(index)
+                            onComplete: tasks.complete(index)
                         }
                     }
 
                     AddTaskButton {
                         id: addTaskButton
                         onClicked: {
-                            tasks.append("neuer Task")
+                            tasks.append("neuer Task", "26.07.2022", false)
                         }
                     }
                 }
