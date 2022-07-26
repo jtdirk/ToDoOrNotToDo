@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import "./"
 import ProjectListModel
+import TodoTXTModel
 
 Window {
     id: windowMainWindow
@@ -11,6 +12,34 @@ Window {
     height: 480
     visible: true
     title: qsTr("ToDoOrNotToDo")
+
+/* so geht's irgendwie nicht
+    ScrollView {
+        id: scrollView
+
+        anchors.fill: parent
+        Row {
+            anchors.fill: parent
+            Repeater {
+                model: TodoTXTModel {
+                    id: todoTXTModel
+                }
+                delegate: Column {
+                    
+                    Project {
+                        text: project
+                    }
+                    Repeater {
+                        model: todoTXTModel
+                        delegate: Task {
+                            text: display
+                        }
+                    }
+                }
+            }
+        }
+    }
+*/
 
     ScrollView {
         id: scrollView
@@ -42,6 +71,7 @@ Window {
                         model: tasks
                         delegate: Task {
                             text: display
+                            creationDateText: creationDate
                             onTextChanged: model.edit = text
                             onClose: tasks.remove(index)
                         }

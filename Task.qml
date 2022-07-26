@@ -5,4 +5,5 @@ Element {
     border.width: MyStyle.task.border.width
     textSize: MyStyle.task.textSize
     textColor: MyStyle.task.color
+    creationDateVisible: true
 }

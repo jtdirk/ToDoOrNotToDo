@@ -15,6 +15,8 @@ Rectangle {
     property alias textBold: elementText.font.bold
     property alias textSize: elementText.font.pointSize
     property alias textCenter: elementText.horizontalAlignment
+    property bool creationDateVisible: false
+    property alias creationDateText: creationDate.text
     property bool isClosable: true
 
     signal close
@@ -33,21 +35,41 @@ Rectangle {
         id: mouseArea
 
         anchors.fill: parent
-        implicitHeight: elementText.implicitHeight + 2 * MyStyle.element.margins
+        implicitHeight: {
+            if(creationDateVisible)
+            {
+                creationDate.implicitHeight + elementText.implicitHeight + 2 * MyStyle.element.margins
+            } else {
+                elementText.implicitHeight + 2 * MyStyle.element.margins
+            }
+        }
+
         hoverEnabled: true
         preventStealing: true
         
         TextArea {
             id: elementText
 
-            anchors.fill: parent
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
             anchors.margins: MyStyle.element.margins
 
             hoverEnabled: true
 
-            verticalAlignment: Text.AlignVCenter
+            //verticalAlignment: Text.AlignVCenter
             wrapMode: Text.Wrap
             clip: true
+        }
+        TextInput {
+            id: creationDate
+
+            anchors.top: elementText.bottom
+            anchors.left: parent.left
+            anchors.leftMargin: MyStyle.element.margins
+            font.pointSize: elementText.font.pointSize - 2
+
+            visible: creationDateVisible
         }
     }
     RoundButton {

@@ -1,8 +1,11 @@
+from datetime import datetime
 from PySide6.QtCore import (QAbstractTableModel , QAbstractListModel, QByteArray, QModelIndex, Qt, Slot)
 from PySide6.QtGui import QColor
 import pytodotxt
 
 class TaskListModel(QAbstractListModel):
+    CreationDateRole = Qt.UserRole + 1
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.tasks = []
@@ -11,12 +14,15 @@ class TaskListModel(QAbstractListModel):
         return len(self.tasks)
 
     def data(self, index, role: int):
+        print(role)
         if not self.tasks:
             ret = None
         elif not index.isValid():
             ret = None
         elif role == Qt.DisplayRole:
-            ret = self.tasks[index.row()]
+            ret = self.tasks[index.row()]["text"]
+        elif role == self.CreationDateRole:
+            ret = self.tasks[index.row()]["creationDate"]
         else:
             ret = None
 
@@ -26,20 +32,22 @@ class TaskListModel(QAbstractListModel):
         if not index.isValid():
             return False
         if role == Qt.EditRole:
-            self.tasks[index.row()] = value
+            self.tasks[index.row()]["text"] = value
 
         return True
 
     def roleNames(self):
         default = super().roleNames()
+        default[self.CreationDateRole] = QByteArray(b"creationDate")
         return default
 
-    @Slot(str, result=bool)
-    def append(self, task):
+    @Slot(str, str, result=bool)
+    def append(self, task, creationDate):
         """Slot to append a row at the end"""
         result = self.insertRow(self.rowCount())
         if result:
-            self.tasks[self.rowCount() - 1] = task
+            self.tasks[self.rowCount() - 1]["text"] = task
+            self.tasks[self.rowCount() - 1]["creationDate"] = creationDate
             self.dataChanged.emit(self.index(self.rowCount() - 1), self.index(self.rowCount() - 1))
         return result
 
@@ -52,7 +60,7 @@ class TaskListModel(QAbstractListModel):
         """Insert n rows (n = 1 + count)  at row"""
 
         self.beginInsertRows(QModelIndex(), row, row + count)
-        self.tasks.append("")
+        self.tasks.append({"text": "", "creationDate": ""})
         self.endInsertRows()
 
         return True
@@ -184,10 +192,50 @@ class ProjectListModel(QAbstractListModel):
         tlm = TaskListModel()
         for task in self.todotxt.tasks:
             if task.projects[0] == project:
-                tlm.append(task.bare_description())
+                tlm.append(task.bare_description(), task.creation_date.strftime("%d.%m.%Y"))
         
         return tlm
 
+class TodoTXTModel(QAbstractTableModel):
+    
+    ProjectRole = Qt.UserRole + 1
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.todotxt = pytodotxt.TodoTxt('todo.txt')
+        self.todotxt.parse()
+
+    def roleNames(self):
+        default = super().roleNames()
+        default[self.ProjectRole] = QByteArray(b"project")
+        return default
+
+    def rowCount(self, parent=QModelIndex()):
+        return len(self.todotxt.tasks)
+
+    def columnCount(self, parent=QModelIndex()):
+        p = []
+        for t in self.todotxt.tasks:
+            try:
+                p.index(t.projects[0])
+            except:
+                p.append(t.projects[0])
+        
+        return len(p)
+
+    def data(self, index, role: int):
+        if not self.todotxt:
+            ret = None
+        elif not index.isValid():
+            ret = None
+        elif role == Qt.DisplayRole:
+            ret = self.todotxt.tasks[index.row()].bare_description()
+        elif role == self.ProjectRole:
+            ret = self.todotxt.tasks[index.row()].projects[0]
+        else:
+            ret = None
+
+        return ret
 
 class BaseListModel(QAbstractListModel):
 
