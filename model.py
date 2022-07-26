@@ -5,7 +5,8 @@ from datetime import datetime
 
 class TaskListModel(QAbstractListModel):
     CreationDateRole = Qt.UserRole + 1
-    IsCompletedRole = Qt.UserRole + 2
+    CompletionDateRole = Qt.UserRole + 2
+    IsCompletedRole = Qt.UserRole + 3
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -23,6 +24,8 @@ class TaskListModel(QAbstractListModel):
             ret = self.tasks[index.row()]["text"]
         elif role == self.CreationDateRole:
             ret = self.tasks[index.row()]["creationDate"]
+        elif role == self.CompletionDateRole:
+            ret = self.tasks[index.row()]["completionDate"]
         elif role == self.IsCompletedRole:
             ret = self.tasks[index.row()]["isCompleted"]
         else:
@@ -41,16 +44,18 @@ class TaskListModel(QAbstractListModel):
     def roleNames(self):
         default = super().roleNames()
         default[self.CreationDateRole] = QByteArray(b"creationDate")
+        default[self.CompletionDateRole] = QByteArray(b"completionDate")
         default[self.IsCompletedRole] = QByteArray(b"isCompleted")
         return default
 
-    @Slot(str, str, bool, result=bool)
-    def append(self, task, creationDate, is_completed):
+    @Slot(str, str, str, bool, result=bool)
+    def append(self, task, creationDate, completionDate, is_completed):
         """Slot to append a row at the end"""
         result = self.insertRow(self.rowCount())
         if result:
             self.tasks[self.rowCount() - 1]["text"] = task
             self.tasks[self.rowCount() - 1]["creationDate"] = creationDate
+            self.tasks[self.rowCount() - 1]["completionDate"] = completionDate
             self.tasks[self.rowCount() - 1]["isCompleted"] = is_completed
             self.dataChanged.emit(self.index(self.rowCount() - 1), self.index(self.rowCount() - 1))
         return result
@@ -64,7 +69,7 @@ class TaskListModel(QAbstractListModel):
         """Insert n rows (n = 1 + count)  at row"""
 
         self.beginInsertRows(QModelIndex(), row, row + count)
-        self.tasks.append({"text": "", "creationDate": "", "isCompleted": False})
+        self.tasks.append({"text": "", "creationDate": "", "completionDate": "", "isCompleted": False})
         self.endInsertRows()
 
         return True
@@ -89,9 +94,11 @@ class TaskListModel(QAbstractListModel):
         self.endRemoveRows()
         return True
 
-    @Slot(int, result = bool)
-    def complete(self, row: int):
+    @Slot(int, str, result = bool)
+    def complete(self, row: int, completionDate):
         self.tasks[row]["isCompleted"] = not self.tasks[row]["isCompleted"]
+        if self.tasks[row]["isCompleted"]:
+            self.tasks[row]["completionDate"] = completionDate
         self.dataChanged.emit(self.index(row), self.index(row))
 
         return True
@@ -202,7 +209,12 @@ class ProjectListModel(QAbstractListModel):
         tlm = TaskListModel()
         for task in self.todotxt.tasks:
             if task.projects[0] == project:
-                tlm.append(task.bare_description(), task.creation_date.strftime("%d.%m.%Y"), task.is_completed)
+                if task.completion_date == None:
+                    cd = "00.00.0000"
+                else:
+                    cd = task.completion_date.strftime("%d.%m.%Y")
+                    
+                tlm.append(task.bare_description(), task.creation_date.strftime("%d.%m.%Y"), cd, task.is_completed)
         
         return tlm
 

@@ -72,17 +72,18 @@ Window {
                         delegate: Task {
                             text: display
                             creationDateText: creationDate
+                            completionDateText: completionDate
                             isTaskCompleted: isCompleted
                             onTextChanged: model.edit = text
                             onClose: tasks.remove(index)
-                            onComplete: tasks.complete(index)
+                            onComplete: tasks.complete(index, new Date().toLocaleDateString(Qt.locale("de_DE"), "dd.MM.yyyy"))
                         }
                     }
 
                     AddTaskButton {
                         id: addTaskButton
                         onClicked: {
-                            tasks.append("neuer Task", new Date().toLocaleDateString(Qt.locale("de_DE"), "dd.MM.yyyy"), false);
+                            tasks.append("neuer Task", new Date().toLocaleDateString(Qt.locale("de_DE"), "dd.MM.yyyy"), "00.00.0000", false);
                         }
                     }
                 }

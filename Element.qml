@@ -17,7 +17,8 @@ Rectangle {
     property alias textCenter: elementText.horizontalAlignment
     property bool creationDateVisible: false
     property alias creationDateText: creationDate.text
-    property alias isTaskCompleted: elementText.font.strikeout
+    property alias completionDateText: completionDate.text
+    property bool isTaskCompleted: false
     property bool isClosable: true
 
     signal close
@@ -61,6 +62,8 @@ Rectangle {
 
             wrapMode: Text.Wrap
             clip: true
+
+            font.strikeout: isTaskCompleted
         }
         TextInput {
             id: creationDate
@@ -68,9 +71,23 @@ Rectangle {
             anchors.top: elementText.bottom
             anchors.left: parent.left
             anchors.leftMargin: MyStyle.element.margins
+
+            color: elementText.color
             font.pointSize: elementText.font.pointSize - 2
 
             visible: creationDateVisible
+        }
+        TextInput {
+            id: completionDate
+
+            anchors.top: elementText.bottom
+            anchors.right: parent.right
+            anchors.rightMargin: MyStyle.element.margins
+            
+            color: elementText.color
+            font.pointSize: elementText.font.pointSize - 2
+
+            visible: isTaskCompleted
         }
     }
     RoundButton {
