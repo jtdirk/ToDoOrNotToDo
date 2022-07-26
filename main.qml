@@ -82,7 +82,7 @@ Window {
                     AddTaskButton {
                         id: addTaskButton
                         onClicked: {
-                            tasks.append("neuer Task", "26.07.2022", false)
+                            tasks.append("neuer Task", new Date().toLocaleDateString(Qt.locale("de_DE"), "dd.MM.yyyy"), false);
                         }
                     }
                 }
