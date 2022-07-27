@@ -23,6 +23,8 @@ Rectangle {
 
     signal close
     signal complete
+    signal creationDateChanged
+    signal completionDateChanged
     
     property bool hovered: {
         if((mouseArea.containsMouse || elementText.hovered || closeButton.hovered) && isClosable)
@@ -76,6 +78,10 @@ Rectangle {
             font.pointSize: elementText.font.pointSize - 2
 
             visible: creationDateVisible
+
+            validator: RegularExpressionValidator { regularExpression: /^[0-3][0-9][/.][0-3][0-9][/.](?:[0-9][0-9])?[0-9][0-9]$/ }
+
+            onTextChanged: element.creationDateChanged()
         }
         TextInput {
             id: completionDate
@@ -88,6 +94,8 @@ Rectangle {
             font.pointSize: elementText.font.pointSize - 2
 
             visible: isTaskCompleted
+
+            onTextChanged: element.completionDateChanged()
         }
     }
     RoundButton {

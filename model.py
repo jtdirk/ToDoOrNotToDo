@@ -7,6 +7,8 @@ class TaskListModel(QAbstractListModel):
     CreationDateRole = Qt.UserRole + 1
     CompletionDateRole = Qt.UserRole + 2
     IsCompletedRole = Qt.UserRole + 3
+    CreationDateChangedRole = Qt.UserRole + 4
+    CompletionDateChangedRole = Qt.UserRole + 5
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -38,7 +40,11 @@ class TaskListModel(QAbstractListModel):
             return False
         if role == Qt.EditRole:
             self.tasks[index.row()]["text"] = value
-
+        elif role == self.CreationDateChangedRole:
+            print(value)
+            self.tasks[index.row()]["creationDate"] = value
+        elif role == self.CompletionDateChangedRole:
+            self.tasks[index.row()]["completionDate"] = value
         return True
 
     def roleNames(self):
@@ -46,6 +52,8 @@ class TaskListModel(QAbstractListModel):
         default[self.CreationDateRole] = QByteArray(b"creationDate")
         default[self.CompletionDateRole] = QByteArray(b"completionDate")
         default[self.IsCompletedRole] = QByteArray(b"isCompleted")
+        default[self.CreationDateChangedRole] = QByteArray(b"creationDateChanged")
+        default[self.CompletionDateChangedRole] = QByteArray(b"completionDateChanged")
         return default
 
     @Slot(str, str, str, bool, result=bool)
