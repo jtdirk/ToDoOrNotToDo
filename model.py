@@ -55,8 +55,8 @@ class TaskListModel(QAbstractListModel):
         default[self.CompletionDateChangedRole] = QByteArray(b"completionDateChanged")
         return default
 
-    @Slot(str, str, str, bool, result=bool)
-    def append(self, task, creationDate, completionDate, is_completed):
+    @Slot(result=bool)
+    def append(self, task = "neuer Task", creationDate = datetime.today().strftime("%d.%m.%Y"), completionDate = "01.01.0001", is_completed = False):
         """Slot to append a row at the end"""
         result = self.insertRow(self.rowCount())
         if result:
@@ -102,7 +102,7 @@ class TaskListModel(QAbstractListModel):
         return True
 
     @Slot(int, str, result = bool)
-    def complete(self, row: int, completionDate):
+    def completeTask(self, row: int, completionDate):
         self.tasks[row]["isCompleted"] = not self.tasks[row]["isCompleted"]
         if self.tasks[row]["isCompleted"]:
             self.tasks[row]["completionDate"] = completionDate
@@ -144,8 +144,8 @@ class ProjectListModel(QAbstractListModel):
         
         return True
 
-    @Slot(str, result=bool)
-    def append(self, project):
+    @Slot(result=bool)
+    def append(self, project = "neues Projekt"):
         """Slot to append a row at the end"""
         result = self.insertRow(self.rowCount())
         if result:
@@ -217,7 +217,7 @@ class ProjectListModel(QAbstractListModel):
         for task in self.todotxt.tasks:
             if task.projects[0] == project:
                 if task.completion_date == None:
-                    cd = "00.00.0000"
+                    cd = "01.01.0001"
                 else:
                     cd = task.completion_date.strftime("%d.%m.%Y")
                     

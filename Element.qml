@@ -20,6 +20,7 @@ Rectangle {
     property alias completionDateText: completionDate.text
     property bool isTaskCompleted: false
     property bool isClosable: true
+    property bool isCompletable: true
 
     signal close
     signal complete
@@ -27,7 +28,7 @@ Rectangle {
     signal completionDateChanged
     
     property bool hovered: {
-        if((mouseArea.containsMouse || elementText.hovered || closeButton.hovered) && isClosable)
+        if(mouseArea.containsMouse || elementText.hovered || closeButton.hovered || completeButton.hovered)
         {
             true
         } else
@@ -138,7 +139,15 @@ Rectangle {
         anchors.top: parent.top
         anchors.right: parent.right
 
-        visible: element.hovered
+        visible: {
+            if(element.hovered && isClosable)
+            {
+                true
+            }
+            else{
+                false
+            }
+        }
 
         HoverHandler {
         }
@@ -155,7 +164,15 @@ Rectangle {
         anchors.top: parent.top
         anchors.right: closeButton.left
 
-        visible: element.hovered
+        visible: {
+            if(element.hovered && isCompletable)
+            {
+                true
+            }
+            else{
+                false
+            }
+        }
 
         HoverHandler {
         }

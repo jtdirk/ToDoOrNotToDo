@@ -9,6 +9,7 @@ Element {
     property alias textBold: button.font.bold
     property alias textSize: button.font.pointSize
     isClosable: false
+    isCompletable: false
 
     width: height
     

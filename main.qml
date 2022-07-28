@@ -65,6 +65,7 @@ Window {
                         text: display
                         onTextChanged: model.edit = text
                         onClose: projectListModel.remove(index)
+                        onComplete: projectListModel.completeProject(index, new Date().toLocaleDateString(Qt.locale("de_DE"), "dd.MM.yyyy"))
                     }
                     Repeater {
                         id: taskList
@@ -76,7 +77,7 @@ Window {
                             isTaskCompleted: isCompleted
                             onTextChanged: model.edit = text
                             onClose: tasks.remove(index)
-                            onComplete: tasks.complete(index, new Date().toLocaleDateString(Qt.locale("de_DE"), "dd.MM.yyyy"))
+                            onComplete: tasks.completeTask(index, new Date().toLocaleDateString(Qt.locale("de_DE"), "dd.MM.yyyy"))
                             onCreationDateChanged: model.creationDateChanged = creationDateText;
                             onCompletionDateChanged: model.completionDateChanged = completionDateText
                         }
@@ -85,7 +86,7 @@ Window {
                     AddTaskButton {
                         id: addTaskButton
                         onClicked: {
-                            tasks.append("neuer Task", new Date().toLocaleDateString(Qt.locale("de_DE"), "dd.MM.yyyy"), "01.01.0001", false);
+                            tasks.append()
                         }
                     }
                 }
@@ -94,7 +95,7 @@ Window {
             AddProjectButton {
                 Layout.alignment: Qt.AlignTop
                 onClicked: {
-                    projectList.model.append("neues Projekt")
+                    projectList.model.append()
                     scrollView.ScrollBar.horizontal.position = 1
                 }
             }

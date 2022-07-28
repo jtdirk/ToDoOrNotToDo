@@ -6,4 +6,5 @@ Element {
     textBold: true
     textSize: MyStyle.project.textSize
     textCenter: Text.AlignHCenter
+    isCompletable: false
 }
