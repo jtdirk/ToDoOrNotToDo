@@ -77,7 +77,7 @@ Window {
                             onTextChanged: model.edit = text
                             onClose: tasks.remove(index)
                             onComplete: tasks.complete(index, new Date().toLocaleDateString(Qt.locale("de_DE"), "dd.MM.yyyy"))
-                            onCreationDateChanged: model.creationDateChanged = creationDateText
+                            onCreationDateChanged: model.creationDateChanged = creationDateText;
                             onCompletionDateChanged: model.completionDateChanged = completionDateText
                         }
                     }
@@ -85,7 +85,7 @@ Window {
                     AddTaskButton {
                         id: addTaskButton
                         onClicked: {
-                            tasks.append("neuer Task", new Date().toLocaleDateString(Qt.locale("de_DE"), "dd.MM.yyyy"), "00.00.0000", false);
+                            tasks.append("neuer Task", new Date().toLocaleDateString(Qt.locale("de_DE"), "dd.MM.yyyy"), "01.01.0001", false);
                         }
                     }
                 }

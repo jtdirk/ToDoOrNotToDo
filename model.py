@@ -1,4 +1,4 @@
-from PySide6.QtCore import (QAbstractTableModel , QAbstractListModel, QByteArray, QModelIndex, Qt, Slot)
+from PySide6.QtCore import (QAbstractTableModel , QAbstractListModel, QByteArray, QModelIndex, Qt, Slot, QDate)
 from PySide6.QtGui import QColor
 import pytodotxt
 from datetime import datetime
@@ -41,7 +41,6 @@ class TaskListModel(QAbstractListModel):
         if role == Qt.EditRole:
             self.tasks[index.row()]["text"] = value
         elif role == self.CreationDateChangedRole:
-            print(value)
             self.tasks[index.row()]["creationDate"] = value
         elif role == self.CompletionDateChangedRole:
             self.tasks[index.row()]["completionDate"] = value

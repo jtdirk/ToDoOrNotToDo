@@ -36,6 +36,15 @@ Rectangle {
         }
     }
 
+    function isValidDate(d) {
+        if(Date.fromLocaleDateString(Qt.locale("de_DE"), d, "d.M.yyyy") != "Invalid Date")
+        {
+            return true
+        } else {
+            return false
+        }
+    }
+
     MouseArea {
         id: mouseArea
 
@@ -79,9 +88,19 @@ Rectangle {
 
             visible: creationDateVisible
 
-            validator: RegularExpressionValidator { regularExpression: /^[0-3][0-9][/.][0-3][0-9][/.](?:[0-9][0-9])?[0-9][0-9]$/ }
+            maximumLength: 10
+            validator: RegularExpressionValidator { regularExpression: /[0-9.]+/ }
 
-            onTextChanged: element.creationDateChanged()
+            onTextChanged: {
+                if(isValidDate(text))
+                {
+                    element.creationDateChanged();
+                    color = elementText.color;
+                }
+                else  {
+                    color = "red";
+                }
+            }
         }
         TextInput {
             id: completionDate
@@ -95,7 +114,18 @@ Rectangle {
 
             visible: isTaskCompleted
 
-            onTextChanged: element.completionDateChanged()
+            maximumLength: 10
+            validator: RegularExpressionValidator { regularExpression: /[0-9.]+/ }
+
+            onTextChanged: {
+                if(isValidDate(text)) {
+                    element.completionDateChanged()
+                    color = elementText.color;
+                }
+                else  {
+                    color = "red";
+                }
+            }
         }
     }
     RoundButton {
