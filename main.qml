@@ -45,7 +45,12 @@ Window {
         id: scrollView
 
         anchors.fill: parent
-        Row{
+
+        contentWidth: availableWidth
+
+        Flow{
+            anchors.fill: parent
+
             spacing: MyStyle.element.margins
 
             Repeater {
@@ -96,7 +101,7 @@ Window {
                 Layout.alignment: Qt.AlignTop
                 onClicked: {
                     projectList.model.append()
-                    scrollView.ScrollBar.horizontal.position = 1
+                    scrollView.ScrollBar.vertical.position = 1
                 }
             }
         }

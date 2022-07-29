@@ -113,7 +113,7 @@ class TaskListModel(QAbstractListModel):
 class ProjectListModel(QAbstractListModel):
 
     TaskRole = Qt.UserRole + 1
-
+    
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.projects = []
