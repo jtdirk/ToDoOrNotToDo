@@ -1,7 +1,11 @@
-from PySide6.QtCore import (QAbstractTableModel , QAbstractListModel, QByteArray, QModelIndex, Qt, Slot, QDate)
+from PySide6.QtCore import (QAbstractTableModel , QAbstractListModel, QByteArray, QModelIndex, Qt, Slot)
 from PySide6.QtGui import QColor
 import pytodotxt
-from datetime import datetime
+from datetime import datetime, timedelta
+# import time
+from timeloop import Timeloop
+
+triggerTimeStamp = datetime.max
 
 class TaskListModel(QAbstractListModel):
     CreationDateRole = Qt.UserRole + 1
@@ -13,6 +17,10 @@ class TaskListModel(QAbstractListModel):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.tasks = []
+
+    def modified(self):
+        global triggerTimeStamp
+        triggerTimeStamp = datetime.now()
 
     def rowCount(self, parent=QModelIndex()):
         return len(self.tasks)
@@ -36,14 +44,19 @@ class TaskListModel(QAbstractListModel):
         return ret
 
     def setData(self, index, value, role):
+        global modified
+
         if not index.isValid():
             return False
         if role == Qt.EditRole:
             self.tasks[index.row()]["text"] = value
+            self.modified()
         elif role == self.CreationDateChangedRole:
             self.tasks[index.row()]["creationDate"] = value
+            self.modified()
         elif role == self.CompletionDateChangedRole:
             self.tasks[index.row()]["completionDate"] = value
+            self.modified()
         return True
 
     def roleNames(self):
@@ -65,6 +78,7 @@ class TaskListModel(QAbstractListModel):
             self.tasks[self.rowCount() - 1]["completionDate"] = completionDate
             self.tasks[self.rowCount() - 1]["isCompleted"] = is_completed
             self.dataChanged.emit(self.index(self.rowCount() - 1), self.index(self.rowCount() - 1))
+            self.modified()
         return result
 
 
@@ -84,7 +98,10 @@ class TaskListModel(QAbstractListModel):
     @Slot(int, result=bool)
     def remove(self, row: int):
         """Slot to remove one row"""
-        return self.removeRow(row)
+        if self.removeRow(row):
+            ret = True
+            self.modified()
+        return ret
 
     def removeRow(self, row, parent=QModelIndex()):
         """Remove one row at index row"""
@@ -107,17 +124,33 @@ class TaskListModel(QAbstractListModel):
         if self.tasks[row]["isCompleted"]:
             self.tasks[row]["completionDate"] = completionDate
         self.dataChanged.emit(self.index(row), self.index(row))
+        
+        self.modified()
 
         return True
 
 class ProjectListModel(QAbstractListModel):
 
     TaskRole = Qt.UserRole + 1
+
+    timeLoop = Timeloop()
     
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.projects = []
         self.openTodotxt()
+        self.timeLoop.start()
+
+    @timeLoop.job(interval=timedelta(seconds=1))
+    def timeLoopJob():
+        global triggerTimeStamp
+        if (datetime.now() - triggerTimeStamp) > timedelta(seconds=2):
+            print("geändert")
+            triggerTimeStamp = datetime.max
+
+    def modified(self):
+        global triggerTimeStamp
+        triggerTimeStamp = datetime.now()
 
     def rowCount(self, parent=QModelIndex()):
         return len(self.projects)
@@ -141,6 +174,7 @@ class ProjectListModel(QAbstractListModel):
             return False
         if role == Qt.EditRole:
             self.projects[index.row()]["project"] = value
+            self.modified()
         
         return True
 
@@ -151,6 +185,7 @@ class ProjectListModel(QAbstractListModel):
         if result:
             self.projects[self.rowCount() - 1]["project"] = project
             self.dataChanged.emit(self.index(self.rowCount() - 1), self.index(self.rowCount() - 1))
+            self.modified()
         return result
 
 
@@ -172,7 +207,10 @@ class ProjectListModel(QAbstractListModel):
     @Slot(int, result=bool)
     def remove(self, row: int):
         """Slot to remove one row"""
-        return self.removeRow(row)
+        if self.removeRow(row):
+            ret = True
+            self.modified()
+        return ret
 
     def removeRow(self, row, parent=QModelIndex()):
         """Remove one row at index row"""
