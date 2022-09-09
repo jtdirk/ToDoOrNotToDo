@@ -2,10 +2,11 @@ from PySide6.QtCore import (QAbstractTableModel , QAbstractListModel, QByteArray
 from PySide6.QtGui import QColor
 import pytodotxt
 from datetime import datetime, timedelta
-# import time
+import weakref
 from timeloop import Timeloop
 
 triggerTimeStamp = datetime.max
+wr = weakref
 
 class TaskListModel(QAbstractListModel):
     CreationDateRole = Qt.UserRole + 1
@@ -136,16 +137,24 @@ class ProjectListModel(QAbstractListModel):
     timeLoop = Timeloop()
     
     def __init__(self, parent=None):
+        global wr
         super().__init__(parent=parent)
+        wr = weakref.ref(self)
         self.projects = []
         self.openTodotxt()
         self.timeLoop.start()
+        print(id(self))
+
+    def save(self):
+        print(self.projects)
+        return True
 
     @timeLoop.job(interval=timedelta(seconds=1))
     def timeLoopJob():
         global triggerTimeStamp
-        if (datetime.now() - triggerTimeStamp) > timedelta(seconds=2):
-            print("geändert")
+        global wr
+        if (datetime.now() - triggerTimeStamp) >= timedelta(seconds=2):
+            ProjectListModel.save(wr)
             triggerTimeStamp = datetime.max
 
     def modified(self):
