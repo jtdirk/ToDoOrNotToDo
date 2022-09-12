@@ -2,11 +2,9 @@ from PySide6.QtCore import (QAbstractTableModel , QAbstractListModel, QByteArray
 from PySide6.QtGui import QColor
 import pytodotxt
 from datetime import datetime, timedelta
-import weakref
 from timeloop import Timeloop
 
 triggerTimeStamp = datetime.max
-wr = weakref
 
 class TaskListModel(QAbstractListModel):
     CreationDateRole = Qt.UserRole + 1
@@ -132,29 +130,30 @@ class TaskListModel(QAbstractListModel):
 
 class ProjectListModel(QAbstractListModel):
 
+    projects = []
+
     TaskRole = Qt.UserRole + 1
 
     timeLoop = Timeloop()
     
     def __init__(self, parent=None):
         global wr
+        global projects
         super().__init__(parent=parent)
-        wr = weakref.ref(self)
-        self.projects = []
+        # projects = []
         self.openTodotxt()
         self.timeLoop.start()
         print(id(self))
 
-    def save(self):
-        print(self.projects)
+    def save():
+        print(ProjectListModel.projects)
         return True
 
     @timeLoop.job(interval=timedelta(seconds=1))
     def timeLoopJob():
         global triggerTimeStamp
-        global wr
         if (datetime.now() - triggerTimeStamp) >= timedelta(seconds=2):
-            ProjectListModel.save(wr)
+            ProjectListModel.save()
             triggerTimeStamp = datetime.max
 
     def modified(self):
@@ -162,17 +161,17 @@ class ProjectListModel(QAbstractListModel):
         triggerTimeStamp = datetime.now()
 
     def rowCount(self, parent=QModelIndex()):
-        return len(self.projects)
+        return len(ProjectListModel.projects)
 
     def data(self, index, role: int):
-        if not self.projects:
+        if not ProjectListModel.projects:
             ret = None
         elif not index.isValid():
             ret = None
         elif role == Qt.DisplayRole:
-            ret = self.projects[index.row()]["project"]
+            ret = ProjectListModel.projects[index.row()]["project"]
         elif role == ProjectListModel.TaskRole:
-            ret = self.projects[index.row()]["tasks"]
+            ret = ProjectListModel.projects[index.row()]["tasks"]
         else:
             ret = None
 
@@ -182,7 +181,7 @@ class ProjectListModel(QAbstractListModel):
         if not index.isValid():
             return False
         if role == Qt.EditRole:
-            self.projects[index.row()]["project"] = value
+            ProjectListModel.projects[index.row()]["project"] = value
             self.modified()
         
         return True
@@ -192,7 +191,7 @@ class ProjectListModel(QAbstractListModel):
         """Slot to append a row at the end"""
         result = self.insertRow(self.rowCount())
         if result:
-            self.projects[self.rowCount() - 1]["project"] = project
+            ProjectListModel.projects[self.rowCount() - 1]["project"] = project
             self.dataChanged.emit(self.index(self.rowCount() - 1), self.index(self.rowCount() - 1))
             self.modified()
         return result
@@ -208,7 +207,7 @@ class ProjectListModel(QAbstractListModel):
         self.beginInsertRows(QModelIndex(), row, row + count)
         t = TaskListModel()
         t.append("neuer Task")
-        self.projects.append({"project": "", "tasks": t})
+        ProjectListModel.projects.append({"project": "", "tasks": t})
         self.endInsertRows()
 
         return True
@@ -230,7 +229,7 @@ class ProjectListModel(QAbstractListModel):
         self.beginRemoveRows(QModelIndex(), row, row + count)
 
         # start database work
-        self.projects = self.projects[:row] + self.projects[row + count + 1 :]
+        ProjectListModel.projects = ProjectListModel.projects[:row] + ProjectListModel.projects[row + count + 1 :]
         # end database work
 
         self.endRemoveRows()
@@ -251,12 +250,12 @@ class ProjectListModel(QAbstractListModel):
                 project = task.projects[0]
 
             already_exists = False
-            for i in range(len(self.projects)):
-                if self.projects[i]["project"] == project:
+            for i in range(len(ProjectListModel.projects)):
+                if ProjectListModel.projects[i]["project"] == project:
                     already_exists = True
 
             if not already_exists:
-                self.projects.append({"project": project, "tasks": self.tasksByProject(project)})
+                ProjectListModel.projects.append({"project": project, "tasks": self.tasksByProject(project)})
 
 
     def tasksByProject(self, project):
