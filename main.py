@@ -2,7 +2,7 @@
 import os
 from pathlib import Path
 import sys
-from model import ProjectListModel, TodoTXTModel
+from model import ProjectListModel
 
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QGuiApplication
@@ -15,12 +15,10 @@ if __name__ == "__main__":
     engine = QQmlApplicationEngine()
 
     qmlRegisterType(ProjectListModel, "ProjectListModel", 1, 0, "ProjectListModel")
-    qmlRegisterType(TodoTXTModel, "TodoTXTModel", 1, 0, "TodoTXTModel")
 
     filename = os.fspath(CURRENT_DIRECTORY / "main.qml")
     url = QUrl.fromLocalFile(filename)
 
-    # setup()
     engine.load(url)
     if not engine.rootObjects():
         sys.exit(-1)
