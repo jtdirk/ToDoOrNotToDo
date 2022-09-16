@@ -73,7 +73,12 @@ class TodoTxtData():
         tasks[nr].is_completed = isCompleted
 
     def appendTask(self, description, creationDate, completionDate, project, isCompleted):
-        pass
+        task = pytodotxt.Task()
+        task.description = description + " +" + project
+        task.creation_date = datetime.strptime(creationDate, "%d.%m.%Y")
+        task.completion_date = datetime.strptime(completionDate, "%d.%m.%Y")
+        task.is_completed = isCompleted
+        self.todotxt.add(task)
     
 todoTxtData = TodoTxtData()
 
@@ -155,15 +160,19 @@ class TaskListModel(QAbstractListModel):
     @Slot(result=bool)
     def append(self, task = "neuer Task", creationDate = datetime.today().strftime("%d.%m.%Y"), completionDate = "01.01.0001", is_completed = False):
         """Slot to append a row at the end"""
-        result = self.insertRow(self.rowCount())
-        if result:
-            self.tasks[self.rowCount() - 1]["text"] = task
-            self.tasks[self.rowCount() - 1]["creationDate"] = creationDate
-            self.tasks[self.rowCount() - 1]["completionDate"] = completionDate
-            self.tasks[self.rowCount() - 1]["isCompleted"] = is_completed
-            self.dataChanged.emit(self.index(self.rowCount() - 1), self.index(self.rowCount() - 1))
-            self.modified()
-        return result
+#        result = self.insertRow(self.rowCount())
+#        if result:
+#            self.tasks[self.rowCount() - 1]["text"] = task
+#            self.tasks[self.rowCount() - 1]["creationDate"] = creationDate
+#            self.tasks[self.rowCount() - 1]["completionDate"] = completionDate
+#            self.tasks[self.rowCount() - 1]["isCompleted"] = is_completed
+#            self.dataChanged.emit(self.index(self.rowCount() - 1), self.index(self.rowCount() - 1))
+#            self.modified()
+#        return result
+        todoTxtData.appendTask(task, creationDate, completionDate, self.project, is_completed)
+        self.dataChanged.emit(self.index(self.rowCount() - 1), self.index(self.rowCount() - 1))
+
+        return True
 
 
     def insertRow(self, row):
@@ -174,7 +183,8 @@ class TaskListModel(QAbstractListModel):
         """Insert n rows (n = 1 + count)  at row"""
 
         self.beginInsertRows(QModelIndex(), row, row + count)
-        self.tasks.append({"text": "", "creationDate": "", "completionDate": "", "isCompleted": False})
+        # self.tasks.append({"text": "", "creationDate": "", "completionDate": "", "isCompleted": False})
+        self.append()
         self.endInsertRows()
 
         return True
