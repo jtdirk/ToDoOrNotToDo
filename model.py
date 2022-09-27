@@ -91,20 +91,11 @@ class TaskListModel(QAbstractListModel):
 
     def __init__(self, project, parent=None):
         super().__init__(parent=parent)
-        self.tasks = []
         self.project = project
 
-    def modified(self):
-        global triggerTimeStamp
-        triggerTimeStamp = datetime.now()
-
     def rowCount(self, parent=QModelIndex()):
-        # return len(self.tasks)
-        return todoTxtData.taskCount(self.project)
-
-    def dataList(self):
-        # return self.tasks
-        return todoTxtData.getTasks(self.project)
+        ret = todoTxtData.taskCount(self.project)
+        return ret
 
     def data(self, index, role: int):
         if not todoTxtData.getTasks(self.project): #self.tasks:
@@ -112,20 +103,16 @@ class TaskListModel(QAbstractListModel):
         elif not index.isValid():
             ret = None
         elif role == Qt.DisplayRole:
-            # ret = self.tasks[index.row()]["text"]
             ret = todoTxtData.getTasks(self.project)[index.row()].bare_description()
         elif role == self.CreationDateRole:
-            # ret = self.tasks[index.row()]["creationDate"]
             ret = todoTxtData.getTasks(self.project)[index.row()].creation_date.strftime("%d.%m.%Y")
         elif role == self.CompletionDateRole:
-            # ret = self.tasks[index.row()]["completionDate"]
             if todoTxtData.getTasks(self.project)[index.row()].completion_date == None:
                 ret = "01.01.0001"
             else:
                 ret = todoTxtData.getTasks(self.project)[index.row()].completion_date.strftime("%d.%m.%Y")
         elif role == self.IsCompletedRole:
-            # ret = self.tasks[index.row()]["isCompleted"]
-            ret = todoTxtData.getCompletion(self.project, index.row())
+            ret = todoTxtData.getTasks(self.project)[index.row()].is_completed
         else:
             ret = None
 
@@ -135,17 +122,15 @@ class TaskListModel(QAbstractListModel):
         if not index.isValid():
             return False
         if role == Qt.EditRole:
-            # self.tasks[index.row()]["text"] = value
             todoTxtData.setDescription(self.project, index.row(), value)
-            self.modified()
         elif role == self.CreationDateChangedRole:
-            # self.tasks[index.row()]["creationDate"] = value
             todoTxtData.setCreationDate(self.project, index.row(), value)
-            self.modified()
         elif role == self.CompletionDateChangedRole:
-            # self.tasks[index.row()]["completionDate"] = value
             todoTxtData.setCompletionDate(self.project, index.row(), value)
-            self.modified()
+        elif role == self.IsCompletedRole:
+            todoTxtData.setCompletion(self.project, index.row(), value)
+            self.dataChanged.emit(index, index, role)
+        
         return True
 
     def roleNames(self):
@@ -158,21 +143,14 @@ class TaskListModel(QAbstractListModel):
         return default
 
     @Slot(result=bool)
-    def append(self, task = "neuer Task", creationDate = datetime.today().strftime("%d.%m.%Y"), completionDate = "01.01.0001", is_completed = False):
+    # def append(self, task = "neuer Task", creationDate = datetime.today().strftime("%d.%m.%Y"), completionDate = "01.01.0001", is_completed = False):
+    def append(self):
         """Slot to append a row at the end"""
-#        result = self.insertRow(self.rowCount())
-#        if result:
-#            self.tasks[self.rowCount() - 1]["text"] = task
-#            self.tasks[self.rowCount() - 1]["creationDate"] = creationDate
-#            self.tasks[self.rowCount() - 1]["completionDate"] = completionDate
-#            self.tasks[self.rowCount() - 1]["isCompleted"] = is_completed
-#            self.dataChanged.emit(self.index(self.rowCount() - 1), self.index(self.rowCount() - 1))
-#            self.modified()
-#        return result
-        todoTxtData.appendTask(task, creationDate, completionDate, self.project, is_completed)
-        self.dataChanged.emit(self.index(self.rowCount() - 1), self.index(self.rowCount() - 1))
+        self.layoutAboutToBeChanged.emit()
+        result = self.insertRow(self.rowCount())
+        self.layoutChanged.emit()
 
-        return True
+        return result
 
 
     def insertRow(self, row):
@@ -183,8 +161,7 @@ class TaskListModel(QAbstractListModel):
         """Insert n rows (n = 1 + count)  at row"""
 
         self.beginInsertRows(QModelIndex(), row, row + count)
-        # self.tasks.append({"text": "", "creationDate": "", "completionDate": "", "isCompleted": False})
-        self.append()
+        todoTxtData.appendTask("neuer Task", datetime.today().strftime("%d.%m.%Y"), "01.01.0001", self.project, False)
         self.endInsertRows()
 
         return True
@@ -212,39 +189,23 @@ class TaskListModel(QAbstractListModel):
         self.endRemoveRows()
         return True
 
-    @Slot(int, str, result = bool)
-    def completeTask(self, row: int, completionDate):
-        # self.tasks[row]["isCompleted"] = not self.tasks[row]["isCompleted"]
-        todoTxtData.setCompletion(self.project, row, not todoTxtData.getCompletion(self.project, row))
-        if todoTxtData.getCompletion(self.project, row):
-            # self.tasks[row]["completionDate"] = completionDate
-            todoTxtData.setCompletionDate(self.project, row, completionDate)
-        self.dataChanged.emit(self.index(row), self.index(row))
-        
-        self.modified()
-
-        return True
-
 class ProjectListModel(QAbstractListModel):
 
-    projects = []
     timeLoop = Timeloop()
 
     TaskRole = Qt.UserRole + 1
     
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.openTodotxt()
         self.timeLoop.start()
 
     def save():
         todotxtSave = pytodotxt.TodoTxt("todosave.txt")
-        for p in ProjectListModel.projects:
-            for t in p["tasks"].dataList():
-                # print(t["text"])
+        for p in todoTxtData.getProjects(): # ProjectListModel.projects:
+            for t in todoTxtData.getTasks(p): # p["tasks"].dataList():
+                # print(t.bare_description())
                 pass
 
-        #print(ProjectListModel.projects)
         return True
 
     @timeLoop.job(interval=timedelta(seconds=1))
@@ -259,19 +220,16 @@ class ProjectListModel(QAbstractListModel):
         triggerTimeStamp = datetime.now()
 
     def rowCount(self, parent=QModelIndex()):
-        # return len(ProjectListModel.projects)
         return todoTxtData.projectCount()
 
     def data(self, index, role: int):
-        if not todoTxtData.getProjects():# ProjectListModel.projects:
+        if not todoTxtData.getProjects():
             ret = None
         elif not index.isValid():
             ret = None
         elif role == Qt.DisplayRole:
-            # ret = ProjectListModel.projects[index.row()]["project"]
             ret = todoTxtData.getProjects()[index.row()]
         elif role == ProjectListModel.TaskRole:
-            # ret = ProjectListModel.projects[index.row()]["tasks"]
             ret = TaskListModel(todoTxtData.getProjects()[index.row()])
         else:
             ret = None
@@ -282,9 +240,7 @@ class ProjectListModel(QAbstractListModel):
         if not index.isValid():
             return False
         if role == Qt.EditRole:
-            # ProjectListModel.projects[index.row()]["project"] = value
             todoTxtData.setProject(index.row(), value)
-            self.modified()
         
         return True
 
@@ -295,7 +251,6 @@ class ProjectListModel(QAbstractListModel):
         if result:
             ProjectListModel.projects[self.rowCount() - 1]["project"] = project
             self.dataChanged.emit(self.index(self.rowCount() - 1), self.index(self.rowCount() - 1))
-            self.modified()
         return result
 
 
@@ -341,36 +296,3 @@ class ProjectListModel(QAbstractListModel):
         default = super().roleNames()
         default[self.TaskRole] = QByteArray(b"tasks")
         return default
-
-    def openTodotxt(self):
-        self.todotxt = pytodotxt.TodoTxt('todo.txt')
-        self.todotxt.parse()
-
-        for task in self.todotxt.tasks:
-            project = ""
-            if task.projects:
-                project = task.projects[0]
-
-            already_exists = False
-            for i in range(len(ProjectListModel.projects)):
-                if ProjectListModel.projects[i]["project"] == project:
-                    already_exists = True
-
-            if not already_exists:
-                # ProjectListModel.projects.append({"project": project, "tasks": self.tasksByProject(project)})
-                pass
-
-
-#    def tasksByProject(self, project):
-#        tlm = TaskListModel()
-#        for task in self.todotxt.tasks:
-#            if task.projects[0] == project:
-#                if task.completion_date == None:
-#                    cd = "01.01.0001"
-#                else:
-#                    cd = task.completion_date.strftime("%d.%m.%Y")
-#                    
-#                tlm.append(task.bare_description(), task.creation_date.strftime("%d.%m.%Y"), cd, task.is_completed)
-#        
-#        return tlm
-

@@ -53,7 +53,10 @@ Window {
                             isTaskCompleted: isCompleted
                             onTextChanged: model.edit = text
                             onClose: tasks.remove(index)
-                            onComplete: tasks.completeTask(index, new Date().toLocaleDateString(Qt.locale("de_DE"), "dd.MM.yyyy"))
+                            onComplete: {
+                                model.completionDateChanged = new Date().toLocaleDateString(Qt.locale("de_DE"), "dd.MM.yyyy")
+                                model.isCompleted = !isCompleted
+                            }
                             onCreationDateChanged: model.creationDateChanged = creationDateText;
                             onCompletionDateChanged: model.completionDateChanged = completionDateText
                         }
