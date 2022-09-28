@@ -20,7 +20,7 @@ class ProjectListModel(QAbstractListModel):
             ret = None
         elif role == Qt.DisplayRole:
             ret = self.todoData.getProjects()[index.row()]["name"]
-        elif role == ProjectListModel.TaskRole:
+        elif role == self.TaskRole:
             ret = TaskListModel(index.row(), self.todoData)
         else:
             ret = None

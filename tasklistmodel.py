@@ -6,7 +6,6 @@ class TaskListModel(QAbstractListModel):
     IsCompletedRole = Qt.UserRole + 3
     CreationDateChangedRole = Qt.UserRole + 4
     CompletionDateChangedRole = Qt.UserRole + 5
-    ToggleCompletionRole = Qt.UserRole + 6
 
     def __init__(self, project, todoData, parent=None):
         super().__init__(parent=parent)
@@ -43,9 +42,6 @@ class TaskListModel(QAbstractListModel):
             self.todoData.setCreationDate(self.project, index.row(), value)
         elif role == self.CompletionDateChangedRole:
             self.todoData.setCompletionDate(self.project, index.row(), value)
-        elif role == self.ToggleCompletionRole:
-            self.todoData.toggleCompletion(self.project, index.row())
-            self.dataChanged.emit(index.row(), index.row())
         
         return True
 
@@ -56,7 +52,6 @@ class TaskListModel(QAbstractListModel):
         default[self.IsCompletedRole] = QByteArray(b"isCompleted")
         default[self.CreationDateChangedRole] = QByteArray(b"creationDateChanged")
         default[self.CompletionDateChangedRole] = QByteArray(b"completionDateChanged")
-        default[self.ToggleCompletionRole] = QByteArray(b"toggleCompletion")
 
         return default
 
