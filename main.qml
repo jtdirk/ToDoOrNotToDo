@@ -11,7 +11,7 @@ Window {
     height: 480
     visible: true
     title: qsTr("ToDoOrNotToDo")
-
+    
     ScrollView {
         id: scrollView
 
@@ -54,8 +54,8 @@ Window {
                             onTextChanged: model.edit = text
                             onClose: tasks.remove(index)
                             onComplete: {
-                                model.completionDateChanged = new Date().toLocaleDateString(Qt.locale("de_DE"), "dd.MM.yyyy")
-                                model.isCompleted = !isCompleted
+                                //model.completionDateChanged = new Date().toLocaleDateString(Qt.locale("de_DE"), "dd.MM.yyyy")
+                                model.isCompleted = !model.isCompleted
                             }
                             onCreationDateChanged: model.creationDateChanged = creationDateText;
                             onCompletionDateChanged: model.completionDateChanged = completionDateText

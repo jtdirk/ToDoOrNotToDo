@@ -2,8 +2,7 @@
 import os
 from pathlib import Path
 import sys
-# from auslagerung import TodoTXTModel
-from model import ProjectListModel, TodoTxtData
+from projectlistmodel import ProjectListModel
 
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QGuiApplication
