@@ -38,7 +38,6 @@ class ProjectListModel(QAbstractListModel):
     @Slot(result=bool)
     def append(self):
         result = self.insertRow(self.rowCount())
-        self.dataChanged.emit(self.index(self.rowCount() - 1), self.index(self.rowCount() - 1))
         
         return result
 
@@ -47,7 +46,7 @@ class ProjectListModel(QAbstractListModel):
         return self.insertRows(row, 0)
 
     def insertRows(self, row: int, count, index=QModelIndex()):
-        self.beginInsertRows(QModelIndex(), row, row + count)
+        self.beginInsertRows(index, row, row + count)
         self.todoData.appendProject()
         self.endInsertRows()
 

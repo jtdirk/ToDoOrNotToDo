@@ -72,9 +72,9 @@ class TodoJSON():
 
     def toggleCompletion(self, projectNr, taskNr):
         if self.getCompletion(projectNr, taskNr):
-            todoData.setCompletionDate(projectNr, taskNr, "")
+            self.setCompletionDate(projectNr, taskNr, "")
         else:
-            todoData.setCompletionDate(projectNr, taskNr, datetime.today().strftime("%d.%m.%Y"))
+            self.setCompletionDate(projectNr, taskNr, datetime.today().strftime("%d.%m.%Y"))
         self.modified()
 
     def appendTask(self, projectNr):

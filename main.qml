@@ -20,6 +20,7 @@ Window {
         contentWidth: availableWidth
 
         Flow{
+            id: flow
             anchors.fill: parent
 
             spacing: MyStyle.element.margins
@@ -41,7 +42,6 @@ Window {
                         text: display
                         onTextChanged: model.edit = text
                         onClose: projectListModel.remove(index)
-                        onComplete: projectListModel.completeProject(index, new Date().toLocaleDateString(Qt.locale("de_DE"), "dd.MM.yyyy"))
                     }
                     Repeater {
                         id: taskList
@@ -52,12 +52,9 @@ Window {
                             completionDateText: completionDate
                             isTaskCompleted: isCompleted
                             onTextChanged: model.edit = text
-                            onClose: tasks.remove(index)
-                            onComplete: {
-                                //model.completionDateChanged = new Date().toLocaleDateString(Qt.locale("de_DE"), "dd.MM.yyyy")
-                                model.isCompleted = !model.isCompleted
-                            }
-                            onCreationDateChanged: model.creationDateChanged = creationDateText;
+                            onClose: taskList.model.remove(index)
+                            onComplete: taskList.model.toggleCompletion(index)
+                            onCreationDateChanged: model.creationDateChanged = creationDateText
                             onCompletionDateChanged: model.completionDateChanged = completionDateText
                         }
                     }
@@ -65,7 +62,7 @@ Window {
                     AddTaskButton {
                         id: addTaskButton
                         onClicked: {
-                            tasks.append()
+                            taskList.model.append()
                         }
                     }
                 }
@@ -75,7 +72,7 @@ Window {
                 Layout.alignment: Qt.AlignTop
                 onClicked: {
                     projectList.model.append()
-                    scrollView.ScrollBar.vertical.position = 1
+                    //scrollView.ScrollBar.vertical.position = 1
                 }
             }
         }

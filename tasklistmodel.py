@@ -6,6 +6,7 @@ class TaskListModel(QAbstractListModel):
     IsCompletedRole = Qt.UserRole + 3
     CreationDateChangedRole = Qt.UserRole + 4
     CompletionDateChangedRole = Qt.UserRole + 5
+    ToggleCompletionRole = Qt.UserRole + 6
 
     def __init__(self, project, todoData, parent=None):
         super().__init__(parent=parent)
@@ -42,9 +43,9 @@ class TaskListModel(QAbstractListModel):
             self.todoData.setCreationDate(self.project, index.row(), value)
         elif role == self.CompletionDateChangedRole:
             self.todoData.setCompletionDate(self.project, index.row(), value)
-        elif role == self.IsCompletedRole:
+        elif role == self.ToggleCompletionRole:
             self.todoData.toggleCompletion(self.project, index.row())
-            self.dataChanged.emit(index, index, role)
+            self.dataChanged.emit(index.row(), index.row())
         
         return True
 
@@ -55,20 +56,26 @@ class TaskListModel(QAbstractListModel):
         default[self.IsCompletedRole] = QByteArray(b"isCompleted")
         default[self.CreationDateChangedRole] = QByteArray(b"creationDateChanged")
         default[self.CompletionDateChangedRole] = QByteArray(b"completionDateChanged")
-        
+        default[self.ToggleCompletionRole] = QByteArray(b"toggleCompletion")
+
         return default
+
+    @Slot(int, result=bool)
+    def toggleCompletion(self, row: int):
+        self.todoData.toggleCompletion(self.project, row)
+        self.dataChanged.emit(self.index(row), self.index(row))
+        return True
 
     @Slot(result=bool)
     def append(self):
         result = self.insertRow(self.rowCount())
-        self.dataChanged.emit(self.index(self.rowCount() - 1), self.index(self.rowCount() - 1))
 
         return result
 
     def insertRow(self, row):
-        return self.insertRows(row, 0, self.index(row))
+        return self.insertRows(row, 0)
 
-    def insertRows(self, row: int, count, index):
+    def insertRows(self, row: int, count, index=QModelIndex()):
         self.beginInsertRows(index, row, row + count)
         self.todoData.appendTask(self.project)
         self.endInsertRows()
