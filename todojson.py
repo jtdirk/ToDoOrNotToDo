@@ -1,10 +1,12 @@
 from datetime import datetime, timedelta
 import json
 from timeloop import Timeloop
+import copy
 
 class TodoJSON():
     
     tl = Timeloop()
+    undoHistorySize = 10
     
     def __init__(self) -> None:
         global d
@@ -12,7 +14,9 @@ class TodoJSON():
             self.data = json.load(json_file)
         
         d = self.data
-        TodoJSON.tl.start()
+        self.undoHistory = []
+        self.redoHistory = []
+        # TodoJSON.tl.start()
 
     @tl.job(interval=timedelta(seconds=1))
     def save():
@@ -23,7 +27,46 @@ class TodoJSON():
                 json.dump(d, json_file, ensure_ascii=False)
             triggerTimeStamp = datetime.max
 
+    def isUndoAvailable(self):
+        if not self.undoHistory:
+            return False
+        elif (len(self.undoHistory) < 2):
+            return False
+        return True
+
+    def isRedoAvailable(self):
+        if not self.redoHistory:
+            return False
+        elif (len(self.redoHistory) < 1):
+            return False
+        return True
+
+    def redo(self):
+        if self.isRedoAvailable():
+            self.data = copy.deepcopy(self.redoHistory[len(self.redoHistory) - 1])
+            self.undoHistory.append(copy.deepcopy(self.data))
+            self.redoHistory.pop()
+            return True
+        
+        return False
+
+    def undo(self):
+        if self.isUndoAvailable():
+            self.redoHistory.append(copy.deepcopy(self.undoHistory[len(self.undoHistory) - 1]))
+            self.data = copy.deepcopy(self.undoHistory[len(self.undoHistory) - 2])
+            self.undoHistory.pop()
+            return True
+        
+        return False
+
     def modified(self):
+        if not self.undoHistory:
+            self.undoHistory.append(copy.deepcopy(self.data))
+        elif (self.undoHistory[len(self.undoHistory) - 1] != self.data):
+            self.undoHistory.append(copy.deepcopy(self.data))
+            self.redoHistory.clear()
+        while len(self.undoHistory) > TodoJSON.undoHistorySize:
+            self.undoHistory.pop(0)
         global triggerTimeStamp
         triggerTimeStamp = datetime.now()
 

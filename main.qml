@@ -4,23 +4,49 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import "./"
 import ProjectListModel
+import PropertiesModel
 
-Window {
+ApplicationWindow {
     id: windowMainWindow
     width: 640
     height: 480
     visible: true
     title: qsTr("ToDoOrNotToDo")
-    
+
+    PropertiesModel {
+        id: pm
+    }
+
+    header: ToolBar {
+        RowLayout {
+            ToolButton {
+                id: undoButton
+                text: "untu"
+                //enabled: projectListModel.isUndoAvailable
+                onClicked: projectListModel.undo()
+            }
+            ToolButton {
+                text: "nochmal"
+                //enabled: windowMainWindow.isUndoAvailable
+                onClicked: projectListModel.redo()
+            }
+                Text {
+        text: pm.name
+    }
+
+        }
+    }
+
     ScrollView {
         id: scrollView
-
+        
         anchors.fill: parent
 
         contentWidth: availableWidth
 
         Flow{
             id: flow
+
             anchors.fill: parent
 
             spacing: MyStyle.element.margins
@@ -29,13 +55,13 @@ Window {
                 id: projectList
 
                 anchors.fill: parent
-                
+
                 model: ProjectListModel {
                     id: projectListModel
                 }
                 delegate: Column {
                     id: column
-
+                    
                     Project {
                         id: project
                         

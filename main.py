@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 import sys
 from projectlistmodel import ProjectListModel
-
+from propertiesmodel import PropertiesModel
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine, qmlRegisterType
@@ -15,6 +15,7 @@ if __name__ == "__main__":
     engine = QQmlApplicationEngine()
 
     qmlRegisterType(ProjectListModel, "ProjectListModel", 1, 0, "ProjectListModel")
+    qmlRegisterType(PropertiesModel, "PropertiesModel", 1, 0, "PropertiesModel")
 
     filename = os.fspath(CURRENT_DIRECTORY / "main.qml")
     url = QUrl.fromLocalFile(filename)

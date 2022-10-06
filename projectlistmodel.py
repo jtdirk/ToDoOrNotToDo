@@ -5,6 +5,8 @@ from tasklistmodel import TaskListModel
 class ProjectListModel(QAbstractListModel):
 
     TaskRole = Qt.UserRole + 1
+    IsUndoAvailableRole = Qt.UserRole + 2
+    TestRole = Qt.UserRole + 3
     
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -22,6 +24,10 @@ class ProjectListModel(QAbstractListModel):
             ret = self.todoData.getProjects()[index.row()]["name"]
         elif role == self.TaskRole:
             ret = TaskListModel(index.row(), self.todoData)
+        elif role == self.TestRole:
+            ret = "Test"
+        elif role == self.IsUndoAvailableRole:
+            ret = self.todoData.isUndoAvailable()
         else:
             ret = None
 
@@ -34,6 +40,20 @@ class ProjectListModel(QAbstractListModel):
             self.todoData.setProject(index.row(), value)
         
         return True
+
+    @Slot(result=bool)
+    def redo(self):
+        ret =self.todoData.redo()
+        self.layoutChanged.emit()
+        
+        return ret
+
+    @Slot(result=bool)
+    def undo(self):
+        ret =self.todoData.undo()
+        self.layoutChanged.emit()
+        
+        return ret
 
     @Slot(result=bool)
     def append(self):
@@ -71,4 +91,6 @@ class ProjectListModel(QAbstractListModel):
     def roleNames(self):
         default = super().roleNames()
         default[self.TaskRole] = QByteArray(b"tasks")
+        default[self.IsUndoAvailableRole] = QByteArray(b"isUndoAvailable")
+        default[self.TestRole] = QByteArray(b"test")
         return default
