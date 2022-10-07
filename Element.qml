@@ -4,6 +4,8 @@ import QtQuick.Controls
 Rectangle {
     id: element
 
+    color: MyStyle.general.color
+
     width: MyStyle.element.width
     radius: MyStyle.element.radius
     anchors.margins: MyStyle.element.margins
@@ -65,6 +67,9 @@ Rectangle {
         TextArea {
             id: elementText
 
+            background: Rectangle {
+                color: MyStyle.general.color
+            }
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right

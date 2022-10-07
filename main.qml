@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Window
 import QtQuick.Layouts
 import QtQuick.Controls
-import "./"
+import "."
 import ProjectListModel
 
 ApplicationWindow {
@@ -10,13 +10,14 @@ ApplicationWindow {
     width: 640
     height: 480
     visible: true
+    color: MyStyle.general.color
     title: "ToDoOrNotToDo"
     Binding on title {
         when: projectListModel.unsavedChanges
         value: "ToDoOrNotToDo *"
     }
 
-    Component.onCompleted: projectListModel.saveData() 
+    Component.onCompleted: projectListModel.saveData()
     onClosing: projectListModel.saveData()
 
     ProjectListModel {
@@ -37,6 +38,13 @@ ApplicationWindow {
                 onClicked: projectListModel.redo()
             }
         }
+    }
+
+    footer: Slider {
+        from: 1
+        value: 10
+        to: 100
+        onMoved: MyStyle.general.scale = value / 10
     }
 
     ScrollView {
