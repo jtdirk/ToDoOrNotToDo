@@ -11,12 +11,18 @@ class TodoJSON(QObject):
     def __init__(self) -> None:
         QObject.__init__(self)
 
-        with open('todo.json', encoding='utf-8') as json_file:
-            self.data = json.load(json_file)
-        
+        self.data = {"projects": []}
         self._unsavedChanges = False
         self.undoHistory = []
         self.redoHistory = []
+
+        try:
+            json_file = open('todo.json', encoding='utf-8')
+        except FileNotFoundError:
+            open('todo.json', "x", encoding='utf-8')
+            self.appendProject()
+        else:
+            self.data = json.load(json_file)
 
         self.triggerTimeStamp = datetime.max
         self.timer = QTimer(self)

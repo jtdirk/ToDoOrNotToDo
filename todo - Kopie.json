@@ -1,0 +1,49 @@
+{
+    "projects": [
+        {
+            "name": "Projekt A",
+            "tasks": [
+                {
+                    "text": "Räucherstäbchen anzünden",
+                    "creationDate": "17.03.1977",
+                    "completionDate": ""
+                },
+                {
+                    "text": "Tee kochen",
+                    "creationDate": "24.12.1989",
+                    "completionDate": "25.12.1989"
+                }
+            ]
+        },
+        {
+            "name": "Projekt B",
+            "tasks": [
+                {
+                    "text": "Nase bohren",
+                    "creationDate": "01.01.2000",
+                    "completionDate": "27.08.2021"
+                },
+                {
+                    "text": "Im Ohr pulen",
+                    "creationDate": "14.10.2021",
+                    "completionDate": ""
+                }
+            ]
+        },
+        {
+            "name": "Projekt C",
+            "tasks": [
+                {
+                    "text": "weiß noch nicht",
+                    "creationDate": "27.09.2022",
+                    "completionDate": ""
+                },
+                {
+                    "text": "wir werden sehen",
+                    "creationDate": "28.09.2022",
+                    "completionDate": ""
+                }
+            ]
+        }
+    ]
+}
