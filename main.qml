@@ -4,36 +4,38 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import "./"
 import ProjectListModel
-import PropertiesModel
 
 ApplicationWindow {
     id: windowMainWindow
     width: 640
     height: 480
     visible: true
-    title: qsTr("ToDoOrNotToDo")
+    title: "ToDoOrNotToDo"
+    Binding on title {
+        when: projectListModel.unsavedChanges
+        value: "ToDoOrNotToDo *"
+    }
 
-    PropertiesModel {
-        id: pm
+    Component.onCompleted: projectListModel.saveData() 
+    onClosing: projectListModel.saveData()
+
+    ProjectListModel {
+        id: projectListModel
     }
 
     header: ToolBar {
         RowLayout {
             ToolButton {
                 id: undoButton
-                text: "untu"
-                //enabled: projectListModel.isUndoAvailable
+                icon.source: "undo.svg"
+                enabled: projectListModel.isUndoAvailable
                 onClicked: projectListModel.undo()
             }
             ToolButton {
-                text: "nochmal"
-                //enabled: windowMainWindow.isUndoAvailable
+                icon.source: "redo.svg"
+                enabled: projectListModel.isRedoAvailable
                 onClicked: projectListModel.redo()
             }
-                Text {
-        text: pm.name
-    }
-
         }
     }
 
@@ -56,9 +58,8 @@ ApplicationWindow {
 
                 anchors.fill: parent
 
-                model: ProjectListModel {
-                    id: projectListModel
-                }
+                model: projectListModel
+
                 delegate: Column {
                     id: column
                     
@@ -98,7 +99,6 @@ ApplicationWindow {
                 Layout.alignment: Qt.AlignTop
                 onClicked: {
                     projectList.model.append()
-                    //scrollView.ScrollBar.vertical.position = 1
                 }
             }
         }

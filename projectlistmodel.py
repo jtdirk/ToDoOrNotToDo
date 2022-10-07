@@ -1,16 +1,63 @@
-from PySide6.QtCore import (QAbstractListModel, QByteArray, QModelIndex, Qt, Slot)
+from PySide6.QtCore import (QAbstractListModel, QByteArray, QModelIndex, Qt, Slot, Property, Signal)
 from todojson import TodoJSON
 from tasklistmodel import TaskListModel
 
 class ProjectListModel(QAbstractListModel):
 
     TaskRole = Qt.UserRole + 1
-    IsUndoAvailableRole = Qt.UserRole + 2
-    TestRole = Qt.UserRole + 3
     
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.todoData = TodoJSON()
+        self.todoData.isUndoAvailable_changed.connect(self.iua_changed)
+        self.todoData.isRedoAvailable_changed.connect(self.ira_changed)
+        self.todoData.unsavedChanges_changed.connect(self.uc_changed)
+    
+    @Slot()
+    def saveData(self):
+        self.todoData.save()
+        
+    def _isUndoAvailable(self):
+        return self.todoData.isUndoAvailable
+
+    @Slot()
+    def iua_changed(self):
+        self.isUndoAvailable_changed.emit()
+
+    @Signal
+    def isUndoAvailable_changed(self):
+        pass
+
+    isUndoAvailable = Property(bool, _isUndoAvailable, notify=isUndoAvailable_changed)
+
+    def _isRedoAvailable(self):
+        return self.todoData.isRedoAvailable
+        
+    @Slot()
+    def ira_changed(self):
+        self.isRedoAvailable_changed.emit()
+
+    @Signal
+    def isRedoAvailable_changed(self):
+        pass
+
+    isRedoAvailable = Property(bool, _isRedoAvailable, notify=isRedoAvailable_changed)
+
+    def _unsavedChanges(self):
+        if self.todoData.unsavedChanges:
+            return True
+        else:
+            return False
+
+    @Slot()
+    def uc_changed(self):
+        self.unsavedChanges_changed.emit()
+
+    @Signal
+    def unsavedChanges_changed(self):
+        pass
+
+    unsavedChanges = Property(bool, _unsavedChanges, notify = unsavedChanges_changed)
 
     def rowCount(self, parent=QModelIndex()):
         return self.todoData.projectCount()
@@ -24,10 +71,6 @@ class ProjectListModel(QAbstractListModel):
             ret = self.todoData.getProjects()[index.row()]["name"]
         elif role == self.TaskRole:
             ret = TaskListModel(index.row(), self.todoData)
-        elif role == self.TestRole:
-            ret = "Test"
-        elif role == self.IsUndoAvailableRole:
-            ret = self.todoData.isUndoAvailable()
         else:
             ret = None
 
@@ -51,6 +94,8 @@ class ProjectListModel(QAbstractListModel):
     @Slot(result=bool)
     def undo(self):
         ret =self.todoData.undo()
+        if not self.todoData.isUndoAvailable:
+            self.isUndoAvailable_changed.emit()
         self.layoutChanged.emit()
         
         return ret
@@ -60,7 +105,6 @@ class ProjectListModel(QAbstractListModel):
         result = self.insertRow(self.rowCount())
         
         return result
-
 
     def insertRow(self, row):
         return self.insertRows(row, 0)
@@ -91,6 +135,5 @@ class ProjectListModel(QAbstractListModel):
     def roleNames(self):
         default = super().roleNames()
         default[self.TaskRole] = QByteArray(b"tasks")
-        default[self.IsUndoAvailableRole] = QByteArray(b"isUndoAvailable")
-        default[self.TestRole] = QByteArray(b"test")
+        # default[self.IsUndoAvailableRole] = QByteArray(b"isUndoAvailable")
         return default

@@ -1,48 +1,76 @@
+from PySide6.QtCore import QObject, Property, Signal, QTimer
 from datetime import datetime, timedelta
 import json
 from timeloop import Timeloop
 import copy
 
-class TodoJSON():
+class TodoJSON(QObject):
     
-    tl = Timeloop()
     undoHistorySize = 10
     
     def __init__(self) -> None:
-        global d
+        QObject.__init__(self)
+
         with open('todo.json', encoding='utf-8') as json_file:
             self.data = json.load(json_file)
         
-        d = self.data
+        self._unsavedChanges = False
         self.undoHistory = []
         self.redoHistory = []
-        # TodoJSON.tl.start()
 
-    @tl.job(interval=timedelta(seconds=1))
-    def save():
-        global triggerTimeStamp
-        global d
-        if (datetime.now() - triggerTimeStamp) >= timedelta(seconds=2):
-            with open("todo.json", mode="w", encoding='utf-8') as json_file:
-                json.dump(d, json_file, ensure_ascii=False)
-            triggerTimeStamp = datetime.max
+        self.triggerTimeStamp = datetime.max
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.checkIfSave)
+        self.timer.start(1000)
 
-    def isUndoAvailable(self):
+    def checkIfSave(self):
+        if (datetime.now() - self.triggerTimeStamp) >= timedelta(seconds=2):
+            self.save()
+
+
+    def save(self):
+        with open("todo.json", mode="w", encoding='utf-8') as json_file:
+            json.dump(self.data, json_file, ensure_ascii=False)
+        self._unsavedChanges = False
+        self.unsavedChanges_changed.emit()
+
+    def _isUndoAvailable(self):
         if not self.undoHistory:
             return False
         elif (len(self.undoHistory) < 2):
             return False
         return True
 
-    def isRedoAvailable(self):
+    @Signal
+    def isUndoAvailable_changed(self):
+        pass
+
+    isUndoAvailable = Property(bool, _isUndoAvailable, notify=isUndoAvailable_changed)
+
+    def _isRedoAvailable(self):
         if not self.redoHistory:
             return False
         elif (len(self.redoHistory) < 1):
             return False
         return True
 
+    @Signal
+    def isRedoAvailable_changed(self):
+        pass
+
+    isRedoAvailable = Property(bool, _isRedoAvailable, notify=isRedoAvailable_changed)
+
+    def _unsavedChanges(self):
+        return self._unsavedChanges
+
+    @Signal
+    def unsavedChanges_changed(self):
+        pass
+
+    unsavedChanges = Property(bool, _unsavedChanges, notify = unsavedChanges_changed)
+
     def redo(self):
-        if self.isRedoAvailable():
+        if self.isRedoAvailable:
             self.data = copy.deepcopy(self.redoHistory[len(self.redoHistory) - 1])
             self.undoHistory.append(copy.deepcopy(self.data))
             self.redoHistory.pop()
@@ -51,7 +79,7 @@ class TodoJSON():
         return False
 
     def undo(self):
-        if self.isUndoAvailable():
+        if self.isUndoAvailable:
             self.redoHistory.append(copy.deepcopy(self.undoHistory[len(self.undoHistory) - 1]))
             self.data = copy.deepcopy(self.undoHistory[len(self.undoHistory) - 2])
             self.undoHistory.pop()
@@ -67,8 +95,11 @@ class TodoJSON():
             self.redoHistory.clear()
         while len(self.undoHistory) > TodoJSON.undoHistorySize:
             self.undoHistory.pop(0)
-        global triggerTimeStamp
-        triggerTimeStamp = datetime.now()
+        self.isUndoAvailable_changed.emit()
+        self.isRedoAvailable_changed.emit()
+        self.triggerTimeStamp = datetime.now()
+        self._unsavedChanges = True
+        self.unsavedChanges_changed.emit()
 
     def projectCount(self):
         return len(self.data["projects"])

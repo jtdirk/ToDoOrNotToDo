@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 12.199217 16"
+   version="1.1"
+   id="svg247"
+   sodipodi:docname="redo.svg"
+   width="12.199217"
+   height="16"
+   inkscape:version="1.2 (dc2aedaf03, 2022-05-15)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview249"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="46.681818"
+     inkscape:cx="6.0087634"
+     inkscape:cy="8.0116845"
+     inkscape:window-width="2560"
+     inkscape:window-height="1377"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg247" />
+  <defs
+     id="defs3051">
+    <style
+       type="text/css"
+       id="current-color-scheme">
+      .ColorScheme-Text {
+        color:#4d4d4d;
+      }
+      </style>
+  </defs>
+  <path
+     style="fill:#000000;fill-opacity:1;stroke:none"
+     d="M 8.699217,0 7.992186,0.707031 10.285154,3 H 7.999998 6.992188 6.5 C 2.899,3 0,5.899 0,9.5 0,13.101 2.899,16 6.5,16 H 8 V 15 H 6.5 C 3.453,15 1,12.547 1,9.5 1,6.453 3.453,4 6.5,4 h 0.492188 1.00781 2.285156 L 7.992186,6.292969 8.699217,7 11.992186,3.707031 12.199217,3.5 11.992186,3.292969 8.699217,0"
+     class="ColorScheme-Text"
+     id="path245" />
+</svg>
