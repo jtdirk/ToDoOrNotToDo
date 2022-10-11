@@ -90,12 +90,15 @@ ApplicationWindow {
                         delegate: Task {
                             text: display
                             creationDateText: creationDate
+                            dueDateText: dueDate
+                            isTaskDue: isDue
                             completionDateText: completionDate
                             isTaskCompleted: isCompleted
                             onTextChanged: model.edit = text
                             onClose: taskList.model.remove(index)
                             onComplete: taskList.model.toggleCompletion(index)
                             onCreationDateChanged: model.creationDateChanged = creationDateText
+                            onDueDateChanged: model.dueDateChanged = dueDateText
                             onCompletionDateChanged: model.completionDateChanged = completionDateText
                         }
                     }

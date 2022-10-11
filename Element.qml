@@ -18,18 +18,22 @@ Rectangle {
     property alias textSize: elementText.font.pointSize
     property alias textCenter: elementText.horizontalAlignment
     property bool creationDateVisible: false
+    property bool dueDateVisible: false
     property alias creationDateText: creationDate.text
+    property alias dueDateText: dueDate.text
     property alias completionDateText: completionDate.text
     property bool isTaskCompleted: false
+    property bool isTaskDue: false
     property bool isClosable: true
     property bool isCompletable: true
 
     signal close
     signal complete
     signal creationDateChanged
+    signal dueDateChanged
     signal completionDateChanged
     
-    property bool hovered: {
+    property bool elementHovered: {
         if(mouseArea.containsMouse || elementText.hovered || closeButton.hovered || completeButton.hovered)
         {
             true
@@ -53,7 +57,7 @@ Rectangle {
 
         anchors.fill: parent
         implicitHeight: {
-            if(creationDateVisible)
+            if(element.creationDateVisible)
             {
                 creationDate.implicitHeight + elementText.implicitHeight + 2 * MyStyle.element.margins
             } else {
@@ -80,25 +84,32 @@ Rectangle {
             wrapMode: Text.Wrap
             clip: true
 
-            font.strikeout: isTaskCompleted
+            font.strikeout: element.isTaskCompleted
         }
-        TextInput {
+        TextField {
             id: creationDate
 
             anchors.top: elementText.bottom
             anchors.left: parent.left
             anchors.leftMargin: MyStyle.element.margins
 
+            width: contentWidth + leftPadding + rightPadding
+            background: Rectangle {
+                border.color: "transparent"
+            }
+
             color: elementText.color
             font.pointSize: elementText.font.pointSize - 2
 
-            visible: creationDateVisible
+            hoverEnabled: true
+
+            visible: element.creationDateVisible
 
             maximumLength: 10
             validator: RegularExpressionValidator { regularExpression: /[0-9.]+/ }
 
             onTextChanged: {
-                if(isValidDate(text))
+                if(element.isValidDate(text))
                 {
                     element.creationDateChanged();
                     color = elementText.color;
@@ -107,30 +118,88 @@ Rectangle {
                     color = "red";
                 }
             }
+            ToolTip {
+                text: "Startdatum"
+                delay: 1000
+                visible: parent.hovered
+            }
         }
-        TextInput {
+        TextField {
+            id: dueDate
+
+            anchors.top: elementText.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            
+            width: contentWidth + leftPadding + rightPadding
+            background: Rectangle {
+                border.color: "transparent"
+            }
+
+            color: elementText.color
+            Binding on color {
+                when: element.isTaskDue
+                value: "blue"
+            }
+            font.pointSize: elementText.font.pointSize - 2
+
+            hoverEnabled: true
+
+            visible: element.dueDateVisible
+
+            maximumLength: 10
+            validator: RegularExpressionValidator { regularExpression: /[0-9.]+/ }
+
+            onTextChanged: {
+                if(element.isValidDate(text)) {
+                    element.dueDateChanged()
+                    color = elementText.color;
+                }
+                else  {
+                    color = "red";
+                }
+            }
+
+            ToolTip {
+                text: "Fälligkeitsdatum"
+                delay: 1000
+                visible: parent.hovered
+            }
+        }
+        TextField {
             id: completionDate
 
             anchors.top: elementText.bottom
             anchors.right: parent.right
             anchors.rightMargin: MyStyle.element.margins
             
+            width: contentWidth + leftPadding + rightPadding
+            background: Rectangle {
+                border.color: "transparent"
+            }
+
             color: elementText.color
             font.pointSize: elementText.font.pointSize - 2
 
-            visible: isTaskCompleted
+            hoverEnabled: true
+
+            visible: element.isTaskCompleted
 
             maximumLength: 10
             validator: RegularExpressionValidator { regularExpression: /[0-9.]+/ }
 
             onTextChanged: {
-                if(isValidDate(text)) {
+                if(element.isValidDate(text)) {
                     element.completionDateChanged()
                     color = elementText.color;
                 }
                 else  {
                     color = "red";
                 }
+            }
+            ToolTip {
+                text: "Enddatum"
+                delay: 1000
+                visible: parent.hovered
             }
         }
     }
@@ -145,7 +214,7 @@ Rectangle {
         anchors.right: parent.right
 
         visible: {
-            if(element.hovered && isClosable)
+            if(element.elementHovered && element.isClosable)
             {
                 true
             }
@@ -170,7 +239,7 @@ Rectangle {
         anchors.right: closeButton.left
 
         visible: {
-            if(element.hovered && isCompletable)
+            if(element.elementHovered && element.isCompletable)
             {
                 true
             }

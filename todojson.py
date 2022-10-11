@@ -1,7 +1,6 @@
 from PySide6.QtCore import QObject, Property, Signal, QTimer
-from datetime import datetime, timedelta
+from datetime import datetime, date, timedelta
 import json
-from timeloop import Timeloop
 import copy
 
 class TodoJSON(QObject):
@@ -126,6 +125,9 @@ class TodoJSON(QObject):
     def getCreationDate(self, projectNr, taskNr):
         return self.data["projects"][projectNr]["tasks"][taskNr]["creationDate"]
 
+    def getDueDate(self, projectNr, taskNr):
+        return self.data["projects"][projectNr]["tasks"][taskNr]["dueDate"]
+
     def getCompletionDate(self, projectNr, taskNr):
         return self.data["projects"][projectNr]["tasks"][taskNr]["completionDate"]
 
@@ -138,6 +140,10 @@ class TodoJSON(QObject):
 
     def setCreationDate(self, projectNr, taskNr, date):
         self.data["projects"][projectNr]["tasks"][taskNr]["creationDate"] = date
+        self.modified()
+
+    def setDueDate(self, projectNr, taskNr, date):
+        self.data["projects"][projectNr]["tasks"][taskNr]["dueDate"] = date
         self.modified()
 
     def setCompletionDate(self, projectNr, taskNr, date):
@@ -154,11 +160,11 @@ class TodoJSON(QObject):
         if self.getCompletion(projectNr, taskNr):
             self.setCompletionDate(projectNr, taskNr, "")
         else:
-            self.setCompletionDate(projectNr, taskNr, datetime.today().strftime("%d.%m.%Y"))
+            self.setCompletionDate(projectNr, taskNr, date.today().strftime("%d.%m.%Y"))
         self.modified()
 
     def appendTask(self, projectNr):
-        self.data["projects"][projectNr]["tasks"].append({"text": "neuer Task", "creationDate": datetime.today().strftime("%d.%m.%Y"), "completionDate": ""})
+        self.data["projects"][projectNr]["tasks"].append({"text": "neuer Task", "creationDate": date.today().strftime("%d.%m.%Y"), "dueDate": date.today().strftime("%d.%m.%Y"), "completionDate": ""})
         self.modified()
 
     def appendProject(self):

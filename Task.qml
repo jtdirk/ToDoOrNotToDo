@@ -1,4 +1,4 @@
-import QtQuick
+//import QtQuick
 
 Element {
     border.color: MyStyle.task.color
@@ -6,4 +6,5 @@ Element {
     textSize: MyStyle.task.textSize
     textColor: MyStyle.task.color
     creationDateVisible: true
+    dueDateVisible: true
 }
