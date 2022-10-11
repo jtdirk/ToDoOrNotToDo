@@ -138,7 +138,7 @@ Rectangle {
             color: elementText.color
             Binding on color {
                 when: element.isTaskDue
-                value: "blue"
+                value: "red"
             }
             font.pointSize: elementText.font.pointSize - 2
 
@@ -151,11 +151,16 @@ Rectangle {
 
             onTextChanged: {
                 if(element.isValidDate(text)) {
-                    element.dueDateChanged()
-                    color = elementText.color;
+                    element.dueDateChanged();
+                    if(element.isTaskDue) {
+                        color = "red";
+                    }
+                    else {
+                        color = elementText.color;
+                    }
                 }
                 else  {
-                    color = "red";
+                    color = "blueviolet";
                 }
             }
 
