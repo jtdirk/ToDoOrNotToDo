@@ -40,11 +40,17 @@ ApplicationWindow {
         }
     }
 
-    footer: Slider {
-        from: 1
-        value: 10
-        to: 100
-        onMoved: MyStyle.general.scale = value / 10
+    footer: ToolBar {
+        RowLayout {
+            anchors.fill: parent
+            Slider {
+                Layout.alignment: Qt.AlignRight
+                from: 4
+                value: 10
+                to: 50
+                onMoved: MyStyle.general.scale = value / 10
+            }
+        }
     }
 
     ScrollView {
