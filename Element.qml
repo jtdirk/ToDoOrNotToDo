@@ -118,10 +118,8 @@ Rectangle {
                     color = "red";
                 }
             }
-            ToolTip {
+            MyToolTip {
                 text: "Startdatum"
-                delay: 1000
-                visible: parent.hovered
             }
         }
         TextField {
@@ -164,10 +162,8 @@ Rectangle {
                 }
             }
 
-            ToolTip {
+            MyToolTip {
                 text: "Fälligkeitsdatum"
-                delay: 1000
-                visible: parent.hovered
             }
         }
         TextField {
@@ -201,10 +197,8 @@ Rectangle {
                     color = "red";
                 }
             }
-            ToolTip {
+            MyToolTip {
                 text: "Enddatum"
-                delay: 1000
-                visible: parent.hovered
             }
         }
     }

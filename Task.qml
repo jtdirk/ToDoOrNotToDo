@@ -1,5 +1,3 @@
-//import QtQuick
-
 Element {
     border.color: MyStyle.task.color
     border.width: MyStyle.task.border.width

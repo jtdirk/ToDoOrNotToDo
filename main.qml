@@ -44,11 +44,21 @@ ApplicationWindow {
         RowLayout {
             anchors.fill: parent
             Slider {
+                id: slider
                 Layout.alignment: Qt.AlignRight
-                from: 4
-                value: 10
-                to: 50
-                onMoved: MyStyle.general.scale = value / 10
+                from: .4
+                value: 1
+                to: 5
+                onMoved: MyStyle.general.scale = value
+                ToolTip {
+                    parent: slider.handle
+                    visible: slider.pressed
+                    text: slider.value.toFixed(1)
+                    background: Rectangle {
+                        color: "white"
+                        border.color: "black"
+                    }
+                }
             }
         }
     }
