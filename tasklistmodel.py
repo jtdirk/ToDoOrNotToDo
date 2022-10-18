@@ -46,16 +46,13 @@ class TaskListModel(QAbstractListModel):
             return False
         if role == Qt.EditRole:
             self.todoData.setText(self.project, index.row(), value)
-            # self.dataChanged.emit(index, index)
         elif role == self.CreationDateChangedRole:
             self.todoData.setCreationDate(self.project, index.row(), value)
-            # self.dataChanged.emit(index, index)
         elif role == self.DueDateChangedRole:
             self.todoData.setDueDate(self.project, index.row(), value)
             self.dataChanged.emit(index, index, [self.IsDueRole])
         elif role == self.CompletionDateChangedRole:
             self.todoData.setCompletionDate(self.project, index.row(), value)
-            # self.dataChanged.emit(index, index)
         return True
 
     def roleNames(self):

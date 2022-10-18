@@ -1,5 +1,5 @@
 from PySide6.QtCore import QObject, Property, Signal, QTimer
-from datetime import datetime, date, timedelta
+from datetime import date
 import json
 import copy
 
@@ -23,15 +23,9 @@ class TodoJSON(QObject):
         else:
             self.data = json.load(json_file)
 
-        self.triggerTimeStamp = datetime.max
         self.timer = QTimer(self)
-        self.timer.timeout.connect(self.checkIfSave)
-        self.timer.start(1000)
-
-    def checkIfSave(self):
-        if (datetime.now() - self.triggerTimeStamp) >= timedelta(seconds=2):
-            self.save()
-
+        self.timer.setSingleShot(True)
+        self.timer.timeout.connect(self.save)
 
     def save(self):
         with open("todo.json", mode="w", encoding='utf-8') as json_file:
@@ -102,7 +96,7 @@ class TodoJSON(QObject):
             self.undoHistory.pop(0)
         self.isUndoAvailable_changed.emit()
         self.isRedoAvailable_changed.emit()
-        self.triggerTimeStamp = datetime.now()
+        self.timer.start(2000)
         self._unsavedChanges = True
         self.unsavedChanges_changed.emit()
 

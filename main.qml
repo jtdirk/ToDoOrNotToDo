@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import "."
 import ProjectListModel
+import Qt.labs.platform
 
 ApplicationWindow {
     id: windowMainWindow
@@ -19,6 +20,18 @@ ApplicationWindow {
 
     Component.onCompleted: projectListModel.saveData()
     onClosing: projectListModel.saveData()
+
+    SystemTrayIcon {
+        visible: true
+        icon.source: "Liste.svg"
+
+        menu: Menu {
+            MenuItem {
+                text: qsTr("Quit")
+                onTriggered: Qt.quit()
+            }
+        }
+    }
 
     ProjectListModel {
         id: projectListModel
