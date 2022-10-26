@@ -10,7 +10,7 @@ ApplicationWindow {
     id: windowMainWindow
     width: 640
     height: 480
-    visible: trayIcon.mainwindowIsVisible
+    visible: true
     color: MyStyle.general.color
 
     property string titleText: "ToDoOrNotToDo"
@@ -21,10 +21,28 @@ ApplicationWindow {
     }
 
     Component.onCompleted: projectListModel.saveData()
+
+    Connections {
+        target: trayIcon
+
+        function onExitClicked() {
+            projectListModel.saveData()
+        }
+
+        function onIconClicked() {
+            if(!windowMainWindow.visible) {
+                windowMainWindow.visible = true
+                windowMainWindow.raise()
+                windowMainWindow.requestActivate()
+            } else {
+                windowMainWindow.hide()
+            }
+        }
+    }
+    
     onClosing: function(close) {
         close.accepted = false
-        //projectListModel.saveData();
-        trayIcon.mainwindowIsVisible = false;
+        windowMainWindow.hide()
     }
 
     ProjectListModel {
