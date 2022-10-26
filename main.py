@@ -3,15 +3,24 @@ import os
 from pathlib import Path
 import sys
 from projectlistmodel import ProjectListModel
+from trayicon import SystemTrayIcon
 from PySide6.QtCore import QUrl
-from PySide6.QtGui import QGuiApplication
+from PySide6.QtGui import QIcon
 from PySide6.QtQml import QQmlApplicationEngine, qmlRegisterType
+from PySide6.QtWidgets import QApplication
 
 CURRENT_DIRECTORY = Path(__file__).resolve().parent
 
 if __name__ == "__main__":
-    app = QGuiApplication(sys.argv)
+    icon = QIcon("Liste.svg")
+
+    app = QApplication(sys.argv)
+    app.setWindowIcon(icon)
+    
+    tray = SystemTrayIcon()
+    
     engine = QQmlApplicationEngine()
+    engine.rootContext().setContextProperty("trayIcon", tray)
 
     qmlRegisterType(ProjectListModel, "ProjectListModel", 1, 0, "ProjectListModel")
 

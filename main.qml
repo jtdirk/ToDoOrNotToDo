@@ -10,27 +10,21 @@ ApplicationWindow {
     id: windowMainWindow
     width: 640
     height: 480
-    visible: true
+    visible: trayIcon.mainwindowIsVisible
     color: MyStyle.general.color
-    title: "ToDoOrNotToDo"
+
+    property string titleText: "ToDoOrNotToDo"
+    title: titleText
     Binding on title {
         when: projectListModel.unsavedChanges
-        value: "ToDoOrNotToDo *"
+        value: titleText + " *"
     }
 
     Component.onCompleted: projectListModel.saveData()
-    onClosing: projectListModel.saveData()
-
-    SystemTrayIcon {
-        visible: true
-        icon.source: "Liste.svg"
-
-        menu: Menu {
-            MenuItem {
-                text: qsTr("Quit")
-                onTriggered: Qt.quit()
-            }
-        }
+    onClosing: function(close) {
+        close.accepted = false
+        //projectListModel.saveData();
+        trayIcon.mainwindowIsVisible = false;
     }
 
     ProjectListModel {
