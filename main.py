@@ -4,6 +4,7 @@ from pathlib import Path
 import sys
 from projectlistmodel import ProjectListModel
 from trayicon import SystemTrayIcon
+from settings import Settings
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QIcon
 from PySide6.QtQml import QQmlApplicationEngine, qmlRegisterType
@@ -17,10 +18,12 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setWindowIcon(icon)
     
-    tray = SystemTrayIcon()
-    
+    trayIcon = SystemTrayIcon()
+    settings = Settings()
+
     engine = QQmlApplicationEngine()
-    engine.rootContext().setContextProperty("trayIcon", tray)
+    engine.rootContext().setContextProperty("trayIcon", trayIcon)
+    engine.rootContext().setContextProperty("settings", settings)
 
     qmlRegisterType(ProjectListModel, "ProjectListModel", 1, 0, "ProjectListModel")
 

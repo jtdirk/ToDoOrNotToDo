@@ -2,9 +2,9 @@ import QtQuick
 import QtQuick.Window
 import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Dialogs
 import "."
 import ProjectListModel
-import Qt.labs.platform
 
 ApplicationWindow {
     id: windowMainWindow
@@ -47,6 +47,50 @@ ApplicationWindow {
 
     ProjectListModel {
         id: projectListModel
+
+        todoDataFile: settings.datafile
+    }
+
+    Dialog {
+        id: settingsDialog
+        title: "Einstellungen"
+        modal: true
+        standardButtons: Dialog.Ok// | Dialog.Cancel
+
+        FileDialog {
+            id: fileDialog
+            nameFilters: ["JSON Dateien (*.json)", "Alle Dateien (*)"]
+            defaultSuffix: "json"
+            fileMode: FileDialog.SaveFile
+            options: FileDialog.DontConfirmOverwrite
+
+            onAccepted: settings.datafile = selectedFile.toString().replace("file:///","")
+        }
+
+        GridLayout {
+            columns: 3
+            Label {
+                Layout.column: 0
+                text: "Speicherort der ToDo-Daten:"
+            }
+            TextField {
+                id: filePathTextField
+                Layout.row: 0
+                Layout.column: 1
+                readOnly: true
+
+                width: 300
+
+                text: settings.datafile
+            }
+            Button {
+                Layout.row: 0
+                Layout.column: 2
+
+                text: "Durchsuchen..."
+                onClicked: fileDialog.open()
+            }
+        }
     }
 
     header: ToolBar {
@@ -58,9 +102,15 @@ ApplicationWindow {
                 onClicked: projectListModel.undo()
             }
             ToolButton {
+                id: redoButton
                 icon.source: "redo.svg"
                 enabled: projectListModel.isRedoAvailable
                 onClicked: projectListModel.redo()
+            }
+            ToolButton {
+                id: settingsButoon
+                icon.source: "gear.svg"
+                onClicked: settingsDialog.open()
             }
         }
     }

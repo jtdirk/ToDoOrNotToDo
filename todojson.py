@@ -7,28 +7,37 @@ class TodoJSON(QObject):
     
     undoHistorySize = 10
     
-    def __init__(self) -> None:
+    def __init__(self, todoFile) -> None:
         QObject.__init__(self)
 
+        self.todoFile = todoFile
         self.data = {"projects": []}
         self._unsavedChanges = False
         self.undoHistory = []
         self.redoHistory = []
 
-        try:
-            json_file = open('todo.json', encoding='utf-8')
-        except FileNotFoundError:
-            open('todo.json', "x", encoding='utf-8')
-            self.appendProject()
-        else:
-            self.data = json.load(json_file)
-
         self.timer = QTimer(self)
         self.timer.setSingleShot(True)
         self.timer.timeout.connect(self.save)
 
+        try:
+            json_file = open(self.todoFile, encoding='utf-8')
+        except FileNotFoundError:
+            open(self.todoFile, "x", encoding='utf-8')
+            self.appendProject()
+        else:
+            self.data = json.load(json_file)
+
+    @property
+    def todoFile(self):
+        return self._todoFile
+
+    @todoFile.setter
+    def todoFile(self, value):
+        self._todoFile = value
+
     def save(self):
-        with open("todo.json", mode="w", encoding='utf-8') as json_file:
+        with open(self.todoFile, mode="w", encoding='utf-8') as json_file:
             json.dump(self.data, json_file, ensure_ascii=False)
         self._unsavedChanges = False
         self.unsavedChanges_changed.emit()
