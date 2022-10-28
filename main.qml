@@ -8,19 +8,22 @@ import ProjectListModel
 
 ApplicationWindow {
     id: windowMainWindow
+
+    property bool reallyClose: false
+
     width: 640
     height: 480
-    visible: true
+    visible: false
     color: MyStyle.general.color
 
-    property string titleText: "ToDoOrNotToDo"
-    title: titleText
+    title: appName
     Binding on title {
         when: projectListModel.unsavedChanges
-        value: titleText + " *"
+        value: appName + " *"
     }
 
     Component.onCompleted: projectListModel.saveData()
+
 
     Connections {
         target: trayIcon
@@ -41,8 +44,13 @@ ApplicationWindow {
     }
     
     onClosing: function(close) {
-        close.accepted = false
-        windowMainWindow.hide()
+        if (!reallyClose){
+            close.accepted = false
+            windowMainWindow.hide()
+        }
+        else {
+            projectListModel.saveData()
+        }
     }
 
     ProjectListModel {
@@ -99,18 +107,49 @@ ApplicationWindow {
                 id: undoButton
                 icon.source: "undo.svg"
                 enabled: projectListModel.isUndoAvailable
+                opacity: 0.5
+                Binding on opacity {
+                    when: undoButton.enabled
+                    value: 1
+                }
+                MyToolTip {
+                    text: "Rückgängig"
+                }
                 onClicked: projectListModel.undo()
             }
             ToolButton {
                 id: redoButton
                 icon.source: "redo.svg"
                 enabled: projectListModel.isRedoAvailable
+                opacity: 0.5
+                Binding on opacity {
+                    when: redoButton.enabled
+                    value: 1
+                }
+                MyToolTip {
+                    text: "Wiederherstellen"
+                }
                 onClicked: projectListModel.redo()
             }
             ToolButton {
                 id: settingsButoon
                 icon.source: "gear.svg"
+                MyToolTip {
+                    text: "Einstellungen"
+                }
                 onClicked: settingsDialog.open()
+            }
+            ToolButton {
+                id: closeButton
+                icon.source: "close.svg"
+                enabled: true
+                MyToolTip {
+                    text: "Beenden"
+                }
+                onClicked: {
+                    reallyClose = true
+                    windowMainWindow.close()
+                }
             }
         }
     }

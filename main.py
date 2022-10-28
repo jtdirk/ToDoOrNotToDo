@@ -13,15 +13,17 @@ from PySide6.QtWidgets import QApplication
 CURRENT_DIRECTORY = Path(__file__).resolve().parent
 
 if __name__ == "__main__":
+    appName = "ToDoOrNotToDo"
     icon = QIcon("Liste.svg")
 
     app = QApplication(sys.argv)
     app.setWindowIcon(icon)
     
-    trayIcon = SystemTrayIcon()
+    trayIcon = SystemTrayIcon(appName, icon)
     settings = Settings()
 
     engine = QQmlApplicationEngine()
+    engine.rootContext().setContextProperty("appName", appName)
     engine.rootContext().setContextProperty("trayIcon", trayIcon)
     engine.rootContext().setContextProperty("settings", settings)
 
