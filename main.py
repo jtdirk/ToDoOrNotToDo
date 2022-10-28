@@ -14,7 +14,7 @@ CURRENT_DIRECTORY = Path(__file__).resolve().parent
 
 if __name__ == "__main__":
     appName = "ToDoOrNotToDo"
-    icon = QIcon("Liste.svg")
+    icon = QIcon("list.svg")
 
     app = QApplication(sys.argv)
     app.setWindowIcon(icon)
