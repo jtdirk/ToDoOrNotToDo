@@ -4,7 +4,7 @@ import json
 class Settings(QObject):
 
     filename = 'settings.json'
-    defaultSettings = {"datafile": "todo.json", "hideCompleted": "false"}
+    defaultSettings = {"datafile": "todo.json", "hideCompleted": False}
 
     def __init__(self):
         QObject.__init__(self)
@@ -44,4 +44,4 @@ class Settings(QObject):
 
     hideCompleted_changed = Signal()
 
-    hideCompleted = Property(str, getHideCompleted, setHideCompleted, notify=hideCompleted_changed)
+    hideCompleted = Property(bool, getHideCompleted, setHideCompleted, notify=hideCompleted_changed)
