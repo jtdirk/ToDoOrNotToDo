@@ -10,7 +10,6 @@ ApplicationWindow {
     id: windowMainWindow
 
     property bool reallyClose: false
-    property bool hideCompleted: false
 
     width: 640
     height: 480
@@ -23,8 +22,10 @@ ApplicationWindow {
         value: appName + " *"
     }
 
-    Component.onCompleted: projectListModel.saveData()
-
+    Component.onCompleted: {
+        projectListModel.saveData()
+        hideCompletedButton.checked = settings.hideCompleted
+    }
 
     Connections {
         target: trayIcon
@@ -139,6 +140,7 @@ ApplicationWindow {
                 MyToolTip {
                     text: "Erledigte Tasks ausblenden"
                 }
+                onToggled: settings.hideCompleted = checked
             }
             ToolButton {
                 id: settingsButoon

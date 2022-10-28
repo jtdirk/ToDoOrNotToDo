@@ -4,7 +4,7 @@ import json
 class Settings(QObject):
 
     filename = 'settings.json'
-    defaultSettings = {"datafile": "todo.json"}
+    defaultSettings = {"datafile": "todo.json", "hideCompleted": "false"}
 
     def __init__(self):
         QObject.__init__(self)
@@ -12,9 +12,10 @@ class Settings(QObject):
         try:
             json_file = open(Settings.filename, encoding='utf-8')
         except FileNotFoundError:
-            open(Settings.filename, "x", encoding='utf-8')
+            json_file = open(Settings.filename, "x", encoding='utf-8')
             self.saveSettings(Settings.defaultSettings)
-        else:
+            json_file = open(Settings.filename, encoding='utf-8')
+        finally:
             self.data = json.load(json_file)
         
     def saveSettings(self, settings):
@@ -33,3 +34,14 @@ class Settings(QObject):
 
     datafile = Property(str, getDatafile, setDatafile, notify=datafile_changed)
 
+    def getHideCompleted(self):
+        return self.data["hideCompleted"]
+    
+    def setHideCompleted(self, value):
+        self.data["hideCompleted"] = value
+        self.saveSettings(self.data)
+        self.hideCompleted_changed.emit()
+
+    hideCompleted_changed = Signal()
+
+    hideCompleted = Property(str, getHideCompleted, setHideCompleted, notify=hideCompleted_changed)
