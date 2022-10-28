@@ -10,6 +10,7 @@ ApplicationWindow {
     id: windowMainWindow
 
     property bool reallyClose: false
+    property bool hideCompleted: false
 
     width: 640
     height: 480
@@ -132,6 +133,14 @@ ApplicationWindow {
                 onClicked: projectListModel.redo()
             }
             ToolButton {
+                id: hideCompletedButton
+                checkable: true
+                icon.source: "eye.svg"
+                MyToolTip {
+                    text: "Erledigte Tasks ausblenden"
+                }
+            }
+            ToolButton {
                 id: settingsButoon
                 icon.source: "gear.svg"
                 MyToolTip {
@@ -218,6 +227,11 @@ ApplicationWindow {
                             isTaskDue: isDue
                             completionDateText: completionDate
                             isTaskCompleted: isCompleted
+                            visible: true
+                            Binding on visible {
+                                when: (hideCompletedButton.checked && isTaskCompleted)
+                                value: false
+                            }
                             onTextChanged: model.edit = text
                             onClose: taskList.model.remove(index)
                             onComplete: taskList.model.toggleCompletion(index)

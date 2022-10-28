@@ -9,14 +9,8 @@ class ProjectListModel(QAbstractListModel):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.todoData = None
-#        self.todoData = TodoJSON(todoFile)
-#        self.todoData.isUndoAvailable_changed.connect(self.iua_changed)
-#        self.todoData.isRedoAvailable_changed.connect(self.ira_changed)
-#        self.todoData.unsavedChanges_changed.connect(self.uc_changed)
     
     def setTodoDatafile(self, file):
-        # if self.todoData:
-        #     del self.todoData
         self.todoData = TodoJSON(file)
         self.todoData.isUndoAvailable_changed.connect(self.iua_changed)
         self.todoData.isRedoAvailable_changed.connect(self.ira_changed)
