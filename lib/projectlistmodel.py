@@ -1,6 +1,6 @@
 from PySide6.QtCore import (QAbstractListModel, QByteArray, QModelIndex, Qt, Slot, Property, Signal)
-from todojson import TodoJSON
-from tasklistmodel import TaskListModel
+from lib.todojson import TodoJSON
+from lib.tasklistmodel import TaskListModel
 
 class ProjectListModel(QAbstractListModel):
 

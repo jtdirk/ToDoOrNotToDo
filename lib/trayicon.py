@@ -1,6 +1,5 @@
-from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QSystemTrayIcon, QMenu
-from PySide6.QtCore import Signal, Property
+from PySide6.QtCore import Signal
 
 
 
