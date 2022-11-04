@@ -31,7 +31,7 @@ class SystemTrayIcon(QSystemTrayIcon):
         exit(0)
 
     def on_icon_click(self, reason):
-        if reason == self.Trigger:
+        if reason == QSystemTrayIcon.Trigger:
             self.iconClicked.emit()
 
     def on_message_clicked(self):
