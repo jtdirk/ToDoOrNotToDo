@@ -1,0 +1,1 @@
+C:\Programme2\Python\Python310\python.exe -m nuitka --mingw64 --standalone --disable-console --enable-plugin=pyside6 --include-qt-plugins=sensible,qml --include-data-dir=./qml=qml --include-data-dir=./images=images --windows-icon-from-ico=images/list.png todoornottodo.py
