@@ -6,7 +6,7 @@ Rectangle {
 
     color: MyStyle.general.color
 
-    width: MyStyle.element.width
+    //width: MyStyle.element.width
     radius: MyStyle.element.radius
     anchors.margins: MyStyle.element.margins
 
@@ -26,6 +26,12 @@ Rectangle {
     property bool isTaskDue: false
     property bool isClosable: true
     property bool isCompletable: true
+    property Item dragTarget
+    property int dragAxis
+    property real dragMinimumX
+    property real dragMinimumY
+    property real dragMaximumX
+    property real dragMaximumY
 
     signal close
     signal complete
@@ -68,6 +74,13 @@ Rectangle {
         hoverEnabled: true
         preventStealing: true
         
+        drag.target: element.dragTarget
+        drag.axis: element.dragAxis
+        drag.minimumX: element.dragMinimumX
+        drag.minimumY: element.dragMinimumY
+        drag.maximumX: element.dragMaximumX
+        drag.maximumY: element.dragMaximumY
+
         TextArea {
             id: elementText
 

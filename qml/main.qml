@@ -209,20 +209,30 @@ ApplicationWindow {
 
                 model: projectListModel
 
-                delegate: Column {
-                    id: column
+                delegate: ListView {
+                    id: taskList
                     
-                    Project {
+                    width: MyStyle.element.width
+                    height: contentItem.height
+                    model: tasks
+
+                    header: Project {
                         id: project
                         
+                        width: taskList.width
                         text: display
                         onTextChanged: model.edit = text
                         onClose: projectListModel.remove(index)
                     }
-                    Repeater {
-                        id: taskList
-                        model: tasks
-                        delegate: Task {
+                    delegate: DropArea {
+                        id: dropArea
+                        width: taskList.width
+                        height: taskDelegate.height
+                        parent: taskList.contentItem
+
+                        Task {
+                            id: taskDelegate
+                            width: taskList.width
                             text: display
                             creationDateText: creationDate
                             dueDateText: dueDate
@@ -243,7 +253,7 @@ ApplicationWindow {
                         }
                     }
 
-                    AddTaskButton {
+                    footer: AddTaskButton {
                         id: addTaskButton
                         onClicked: {
                             taskList.model.append()
