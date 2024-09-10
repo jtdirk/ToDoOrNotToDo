@@ -1,0 +1,30 @@
+{
+    "files": [
+        "todoornottodo.py",
+        "todo.json",
+        "settings.json",
+        "qml/AddButton.qml",
+        "qml/AddProjectButton.qml",
+        "qml/AddTaskButton.qml",
+        "qml/Element.qml",
+        "qml/main.qml",
+        "qml/MyToolTip.qml",
+        "qml/Project.qml",
+        "qml/qmldir",
+        "qml/Style.qml",
+        "qml/Task.qml",
+        "lib/__init__.py",
+        "lib/projectlistmodel.py",
+        "lib/settings.py",
+        "lib/tasklistmodel.py",
+        "lib/todojson.py",
+        "lib/trayicon.py",
+        "images/close.svg",
+        "images/eye.svg",
+        "images/gear.svg",
+        "images/list.png",
+        "images/list.svg",
+        "images/redo.svg",
+        "images/undo.svg"
+    ]
+}
