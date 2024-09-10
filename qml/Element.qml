@@ -50,7 +50,7 @@ Rectangle {
     }
 
     function isValidDate(d) {
-        if(Date.fromLocaleDateString(Qt.locale("de_DE"), d, "d.M.yyyy") != "Invalid Date")
+        if(Date.fromLocaleDateString(Qt.locale("de_DE"), d, "d.M.yyyy") !== "Invalid Date")
         {
             return true
         } else {

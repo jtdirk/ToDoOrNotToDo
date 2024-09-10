@@ -21,7 +21,7 @@ class SystemTrayIcon(QSystemTrayIcon):
 
         self.setToolTip(self.appName)
         self.show()
-        self.showMessage(self.appName + " gestartet", "Klicken Sie hier, um das Programmfenster anzuzeigen.", self.icon)
+        # self.showMessage(self.appName + " gestartet", "Klicken Sie hier, um das Programmfenster anzuzeigen.", self.icon)
 
     exitClicked = Signal()
     iconClicked = Signal()
